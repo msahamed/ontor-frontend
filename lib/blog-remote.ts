@@ -7,9 +7,9 @@ import { BLOG_BUCKET, BLOG_COLLECTION, BLOG_DATABASE, BLOG_TAG, MAX_ARTICLE_BYTE
 let mongo: Promise<MongoClient> | undefined;
 let s3: S3Client | undefined;
 function catalog() {
-  // Never fall back to the product's broad MONGODB_URI.
-  const uri = process.env.BLOG_MONGODB_URI;
-  if (!uri) throw new Error("BLOG_MONGODB_URI required for remote blogs");
+  // Shared server credential, explicitly requested by the owner.
+  const uri = process.env.MONGODB_URI;
+  if (!uri) throw new Error("MONGODB_URI required for blogs");
   if (!mongo) {
     const client = new MongoClient(uri, { maxPoolSize: 5, serverSelectionTimeoutMS: 8000 });
     mongo = client.connect().catch(async () => {
@@ -22,11 +22,10 @@ function catalog() {
 }
 function storage() {
   if (!s3) {
-    const region = process.env.BLOG_S3_REGION;
-    const accessKeyId = process.env.BLOG_AWS_ACCESS_KEY_ID;
-    const secretAccessKey = process.env.BLOG_AWS_SECRET_ACCESS_KEY;
-    if (!region || !accessKeyId || !secretAccessKey) throw new Error("Dedicated BLOG_S3_REGION and BLOG_AWS credentials required");
-    s3 = new S3Client({ region, credentials: { accessKeyId, secretAccessKey, sessionToken: process.env.BLOG_AWS_SESSION_TOKEN }, maxAttempts: 2 });
+    const region = process.env.AWS_REGION;
+    if (!region) throw new Error("AWS_REGION required for blogs");
+    // Same SDK credential provider chain as the observations API.
+    s3 = new S3Client({ region, maxAttempts: 2 });
   }
   return s3;
 }

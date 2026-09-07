@@ -1,11 +1,10 @@
 import { getRemoteAsset } from "../../../../../lib/blog-remote";
-import { remoteBlogsEnabled } from "../../../../../lib/blog";
 import { ASSET_NAME, SLUG, VERSION } from "../../../../../lib/blog-model";
 
 export const runtime = "nodejs";
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string; version: string; name: string }> }) {
   const { slug, version, name } = await params;
-  if (!remoteBlogsEnabled() || !SLUG.test(slug) || slug.length > 150 || !VERSION.test(version) || !ASSET_NAME.test(name)) {
+  if (!SLUG.test(slug) || slug.length > 150 || !VERSION.test(version) || !ASSET_NAME.test(name)) {
     return new Response(null, { status: 404 });
   }
   try {

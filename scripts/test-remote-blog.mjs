@@ -10,13 +10,13 @@ import { prepareArticle } from "./migrate-blog-to-storage.mjs";
 
 const csv = (await fs.readFile("../secrects/healthos-vercel-s3_accessKeys.csv", "utf8")).trim().split(/\r?\n/).map(l => l.split(",").map(v => v.replace(/^"|"$/g, "")));
 const secret = randomBytes(32).toString("hex");
-const env = { ...process.env, BLOG_CONTENT_SOURCE: "remote", BLOG_MONGODB_URI: process.env.MONGODB_URI, BLOG_AWS_ACCESS_KEY_ID: csv[1][0], BLOG_AWS_SECRET_ACCESS_KEY: csv[1][1], BLOG_S3_REGION: "us-east-2", BLOG_REVALIDATE_SECRET: secret };
-if (!env.BLOG_MONGODB_URI) throw new Error("Run with --env-file=.env.local");
+const env = { ...process.env, AWS_ACCESS_KEY_ID: csv[1][0], AWS_SECRET_ACCESS_KEY: csv[1][1], AWS_REGION: "us-east-2", BLOG_REVALIDATE_SECRET: secret };
+if (!env.MONGODB_URI) throw new Error("Run with --env-file=.env.local");
 const build = spawn(process.execPath, ["node_modules/next/dist/bin/next", "build", "--webpack"], { env, stdio: "inherit" });
 const [buildCode] = await once(build, "exit");
 if (buildCode !== 0) throw new Error("Remote build failed");
 const server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", "3217"], { env, stdio: "inherit" });
-const mongo = new MongoClient(env.BLOG_MONGODB_URI, { serverSelectionTimeoutMS: 8000 });
+const mongo = new MongoClient(env.MONGODB_URI, { serverSelectionTimeoutMS: 8000 });
 const base = "http://127.0.0.1:3217";
 const check = (ok, message) => { if (!ok) throw new Error(message); };
 try {

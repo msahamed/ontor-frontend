@@ -3,15 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Nav from "../../components/Nav";
 import Footer from "../../components/Footer";
-import { getPublishedPosts, getPostBySlug, remoteBlogsEnabled } from "../../../lib/blog";
+import { getPostBySlug } from "../../../lib/blog";
 import { jsonLd } from "../../../lib/blog-model";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  if (remoteBlogsEnabled()) return [];
-  return (await getPublishedPosts()).map((p) => ({ slug: p.slug }));
+  return [];
 }
 
 export async function generateMetadata(
