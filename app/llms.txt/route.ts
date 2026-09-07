@@ -1,4 +1,4 @@
-// GET /llms.txt — generated at build time so the blog link list never drifts.
+// GET /llms.txt — refreshed through ISR and the publishing webhook.
 //
 // The prose preamble is maintained here; the blog links are pulled from the
 // same source as the sitemap (`getPublishedPosts`), so publishing a post adds
@@ -11,13 +11,15 @@ const BASE_URL = "https://ontor.ai";
 
 // One descriptive line per published post. Uses each post's own title so the
 // list stays accurate without manual edits.
-function postLinks(): string {
-  return getPublishedPosts()
+export const revalidate = 3600;
+
+async function postLinks(): Promise<string> {
+  return (await getPublishedPosts())
     .map((p) => `- ${p.title}: ${BASE_URL}/blog/${p.slug}/`)
     .join("\n");
 }
 
-function buildLlmsTxt(): string {
+async function buildLlmsTxt(): Promise<string> {
   return `# Ontor
 
 > Ontor is performance intelligence from your voice. A desktop app that sits in your menu bar reads your nervous-system state — stress, energy, confidence, fatigue and more — from *how you sound* across real calls and meetings, in real time. It is speaker-gated: only your own voice is analyzed, never the other person's. There is also a few-second voice check-in on mobile. Everything runs on-device.
@@ -67,7 +69,7 @@ Salespeople and sales teams (rep-first performance intelligence for people who l
 
 ## Blog posts
 
-${postLinks()}
+${await postLinks()}
 
 ## Contact
 
@@ -77,32 +79,16 @@ ${postLinks()}
 `;
 }
 
-export function GET() {
+export async function GET() {
   try {
-    return new Response(buildLlmsTxt(), {
+    return new Response(await buildLlmsTxt(), {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "public, max-age=0, must-revalidate",
       },
     });
-  } catch (err) {
-    console.error("[llms.txt] failed to build; serving static fallback", err);
-    const body = [
-      "# Ontor",
-      "",
-      "> Ontor (https://ontor.ai) is performance intelligence from your voice. On-device, speaker-gated.",
-      "",
-      `- Website: ${BASE_URL}/`,
-      `- Pricing: ${BASE_URL}/pricing/`,
-      `- FAQ: ${BASE_URL}/faq/`,
-      `- Blog: ${BASE_URL}/blog/`,
-      "",
-    ].join("\n");
-    return new Response(body, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "public, max-age=0, must-revalidate",
-      },
-    });
+  } catch {
+    // Keep the last successful ISR response instead of caching an empty blog list.
+    throw new Error("[llms.txt] blog catalog unavailable");
   }
 }

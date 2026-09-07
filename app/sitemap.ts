@@ -3,7 +3,9 @@ import { getPublishedPosts } from '../lib/blog'
 
 const BASE_URL = 'https://ontor.ai'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date()
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -24,17 +26,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   // Published blog posts, added automatically as each post's status flips to "published".
-  // Never let a bad post / FS glitch 500 the whole sitemap for crawlers.
+  // Regeneration failures must not replace the cached sitemap with missing URLs.
   let postRoutes: MetadataRoute.Sitemap = []
   try {
-    postRoutes = getPublishedPosts().map((p) => ({
+    postRoutes = (await getPublishedPosts()).map((p) => ({
       url: `${BASE_URL}/blog/${p.slug}/`,
       lastModified: (p.updated || p.date) ? new Date(p.updated || p.date) : lastModified,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     }))
   } catch (err) {
-    console.error('[sitemap] getPublishedPosts failed; returning static routes only', err)
+    // Preserve the last successful ISR result instead of caching missing URLs.
+    console.error('[sitemap] blog catalog unavailable')
+    throw err
   }
 
   return [...staticRoutes, ...postRoutes]

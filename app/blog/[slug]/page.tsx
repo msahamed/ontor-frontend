@@ -3,17 +3,22 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Nav from "../../components/Nav";
 import Footer from "../../components/Footer";
-import { getAllPosts, getPostBySlug } from "../../../lib/blog";
+import { getPublishedPosts, getPostBySlug, remoteBlogsEnabled } from "../../../lib/blog";
+import { jsonLd } from "../../../lib/blog-model";
 
-export function generateStaticParams() {
-  return getAllPosts().map((p) => ({ slug: p.slug }));
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  if (remoteBlogsEnabled()) return [];
+  return (await getPublishedPosts()).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> },
 ): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return {};
   const url = `https://ontor.ai/blog/${post.slug}`;
   const img = post.ogImage || post.heroImage || "/og.png";
@@ -46,7 +51,7 @@ export default async function BlogPostPage(
   { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) notFound();
 
   const url = `https://ontor.ai/blog/${post.slug}`;
@@ -57,7 +62,7 @@ export default async function BlogPostPage(
     "@type": "Article",
     headline: post.title,
     description: post.description,
-    image: `https://ontor.ai${img}`,
+    image: new URL(img, "https://ontor.ai").href,
     datePublished: post.date,
     dateModified: post.updated || post.date,
     author: { "@type": "Organization", name: "Ontor" },
@@ -87,9 +92,9 @@ export default async function BlogPostPage(
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(articleJsonLd) }} />
       {faqJsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(faqJsonLd) }} />
       )}
       <Nav />
 
