@@ -18,6 +18,10 @@ Media uses `/blog-media/<slug>/<version>/<content-hash>.<extension>/`. The serve
 
 ## Environment (server only)
 
+### Local remote-mode verification
+
+`node --env-file=.env.local --experimental-strip-types scripts/test-remote-blog.mjs` builds and starts an isolated loopback test server on port 3217 using temporary process-only operator credentials. It checks all 11 migrated article bodies, every catalog image/checksum and image cache header, blog index, sitemap, llms listing, missing-page 404 and authenticated cache invalidation. It stops its server afterward and does not persist credentials or change production settings. It replaces the local `.next` build with a remote-mode build; rebuild normally before starting in local mode. Do not delete repository articles or shared screenshots until the production environment has scoped credentials and remote loading has been verified there.
+
 ```dotenv
 BLOG_CONTENT_SOURCE=local
 BLOG_MONGODB_URI=<dedicated scoped connection string; never NEXT_PUBLIC_>
@@ -63,6 +67,14 @@ An administrator must create a unique non-partial index on `slug` before import.
 Permissions are additive: inspect all attached Mongo roles and AWS policies, not just one narrow policy. The code enforces target paths but is not a substitute for provider-side permissions. Verify S3 scope with provider policy inspection; the migration script cannot prove effective IAM scope itself.
 
 ## Migration
+
+### Catalog-first staging
+
+`scripts/stage-blog-catalog.mjs` supports the explicitly authorized one-time MongoDB-only import. Its default is a local dry run. Running with `node --env-file=.env.local --experimental-strip-types scripts/stage-blog-catalog.mjs --apply` inserts only missing, deterministic draft records into `healthos.content_catalog` and verifies every field. It may use the existing frontend credential for this operator task only; runtime and bot permissions remain separate. Conflicting records are never overwritten.
+
+Staged records have `status: "draft"` and `migration: { state: "pending_s3_upload", intendedStatus: "published" }` (or the original draft status). Their S3 keys describe planned objects, not uploaded files. Do not enable remote mode or delete local sources on the basis of catalog staging. The existing full importer deliberately rejects these differing draft records; completing migration requires a staged-record promotion step that verifies S3 bytes first and conditionally updates the exact staged record. Do not manually mark records published before that verification.
+
+`scripts/complete-staged-blog-migration.mjs` implements that operator-only promotion. Default execution is a local dry run. With `node --env-file=.env.local --experimental-strip-types scripts/complete-staged-blog-migration.mjs --apply`, it uses the owner's explicitly authorized frontend MongoDB credential and the existing `../secrects/healthos-vercel-s3_accessKeys.csv` file (no credentials embedded in code). All article packages must match the exact staged or already-completed records. It conditionally creates S3 objects and verifies their bytes and content types before promoting any records. Promotion compares the complete staged document atomically to avoid overwriting concurrent edits. It does not change runtime credentials, website mode, IAM policies or local source files. These operator credentials must not be handed to bots. The scoped runtime/publisher setup below still applies.
 
 Node 22.18+ is required for the standalone TypeScript model import. From `frontend/`:
 
