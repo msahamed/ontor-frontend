@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
+import ProductLoop from "./components/landing/ProductLoop";
 import styles from "./page.module.css";
 
 const START_FREE = "/login/?next=/dashboard/subscription/";
@@ -32,21 +33,25 @@ export default function Home() {
       <Nav />
       <main id="top">
         <section className={styles.hero}>
-          <p className={styles.eyebrow}>Voice signals during your workday</p>
-          <h1>Ontor detects shifts and helps you reset.</h1>
-          <p className={styles.lede}>
-            While you speak, Ontor compares stress, energy, confidence, breathing, and other signals with your usual range. When a shift lasts, it suggests a short exercise and lets you see the difference afterward.
-          </p>
-          <div className={styles.actions}>
-            <Link className={styles.primaryButton} href={START_FREE}>See what your voice shows</Link>
+          <div className={styles.heroCopy}>
+            <p className={styles.heroContext}>In your desktop menu bar</p>
+            <h1>See what your voice shows.</h1>
+            <p className={styles.lede}>
+              <strong>Stay sharp for the conversations that matter.</strong>{" "}
+              Ontor notices changes in your voice, like stress or fatigue signals, suggests a short reset, and lets you compare your signals afterward.
+            </p>
+            <div className={styles.actions}>
+              <Link className={styles.primaryButton} href={START_FREE}>Try Ontor free</Link>
+            </div>
+            <p className={styles.trialNote}>14 days free. No card required.</p>
           </div>
-          <p className={styles.trialNote}>14 days free. No card required.</p>
+          <ProductLoop />
         </section>
 
         <section className={styles.liveSection} id="how">
           <div className={styles.sectionCopy}>
             <p className={styles.eyebrow}>While you&rsquo;re speaking</p>
-            <h2>Signals from your voice, in near real time.</h2>
+            <h2>Voice signals that matter for your performance.</h2>
             <p>Ontor refreshes your reading after each 10 seconds you speak. Keep the live view open, or let it work quietly in the background.</p>
           </div>
           <div className={styles.livePanel} aria-label="Example of Ontor reading voice signals while someone speaks">
@@ -179,8 +184,16 @@ export default function Home() {
           </div>
         </section>
 
+        <section className={styles.teamSection} aria-labelledby="team-heading">
+          <div className={styles.sectionCopy}>
+            <h2 id="team-heading">Help your team stay sharp, too.</h2>
+            <p>Give each person feedback and short resets they can use during the workday. Team leaders see aggregate patterns to inform workload, coaching, and support. Individual readings and sessions stay personal.</p>
+          </div>
+          <Link className={styles.teamLink} href="/for-teams">Explore Ontor for teams <span aria-hidden="true">→</span></Link>
+        </section>
+
         <section className={styles.finalCta} id="start">
-          <h2>See what changes the next time you speak.</h2>
+          <h2>See how Ontor can help you stay sharp.</h2>
           <Link className={styles.primaryButton} href={START_FREE}>See what your voice shows</Link>
           <p className={styles.trialNote}>14 days free. No card required. Cancel anytime.</p>
         </section>

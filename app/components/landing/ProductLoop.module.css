@@ -1,0 +1,21 @@
+.scene{position:relative;width:100%;margin:0 auto;max-width:760px}
+.image{display:block;width:100%;height:auto;overflow:hidden;mix-blend-mode:multiply}
+.panel{font-family:var(--font-hanken),Arial,sans-serif;font-weight:500}
+.voiceBar{transform-box:fill-box;transform-origin:center;animation:speaking .85s ease-in-out infinite alternate}
+.scene[data-paused=true] .voiceBar,.scene[data-paused=true] .cue{animation-play-state:paused}
+.panelBackground{transition:x .55s ease,y .55s ease,width .55s ease,height .55s ease}
+.panelContents{animation:reveal .65s ease both}
+.expandButton{cursor:pointer;outline:none}
+.expandButton:focus-visible rect{stroke:#fbbf24;stroke-width:2}
+.cue{animation:cuePulse 1.8s ease-in-out infinite}
+.footer{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:10px;color:#7a847f;margin:10px 10px 0}
+.footer>div{display:flex;gap:10px}
+.footer button{border:0;background:none;color:#65746d;font:inherit;cursor:pointer;padding:5px 0}
+.footer button:focus-visible{outline:2px solid #f59e0b;outline-offset:3px}
+@keyframes reveal{0%,40%{opacity:0}100%{opacity:1}}
+@keyframes cuePulse{0%,100%{opacity:1}50%{opacity:.85}}
+.pause{display:block;margin:9px 10px 0 auto;border:0;background:none;color:#65746d;font:inherit;font-size:11px;cursor:pointer;padding:5px 7px}
+.pause:hover{color:#0f766e}
+.pause:focus-visible{outline:2px solid #f59e0b;outline-offset:2px}
+@keyframes speaking{to{transform:scaleY(.35)}}
+@media(prefers-reduced-motion:reduce){.voiceBar,.cue,.panelContents{animation:none}.panelBackground{transition:none}}

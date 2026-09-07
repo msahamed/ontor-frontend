@@ -1,7 +1,14 @@
 .hero,.liveSection,.reviewSection,.breakSection,.finalCta{max-width:920px;margin:0 auto;padding-left:32px;padding-right:32px}
-.hero{padding-top:88px;padding-bottom:80px}
+.hero{padding-top:56px;padding-bottom:80px;display:grid;grid-template-columns:minmax(0,1fr);gap:28px}
+.heroCopy{min-width:0}
+.hero>figure{max-width:none}
+.heroContext{margin:0 0 14px;font-size:14px;font-weight:600;color:var(--teal)}
+.hero .lede{max-width:650px;font-size:18px;line-height:1.6;margin-top:20px}
+.hero .lede strong{color:var(--ink);font-weight:600}
+.hero .actions{margin-top:24px}
+.hero .primaryButton{box-shadow:none}
 .eyebrow{margin:0 0 15px;color:var(--teal);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
-.hero h1{max-width:800px;margin:0;font-size:clamp(40px,5.4vw,68px);font-weight:800;line-height:1.03;letter-spacing:-.034em;text-wrap:balance}
+.hero h1{max-width:800px;margin:0;font-size:clamp(38px,4.8vw,60px);font-weight:800;line-height:1.08;letter-spacing:-.034em;text-wrap:balance}
 .lede{max-width:660px;margin:24px 0 0;color:var(--ink-soft);font-size:20px;line-height:1.55}
 .actions{display:flex;align-items:center;gap:24px;margin-top:30px}
 .primaryButton{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:12px;background:var(--teal);color:#fff;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(15,118,110,.2);transition:background .2s,transform .2s}
@@ -91,6 +98,13 @@
 .comparisonList>.improvingComparison{border-color:#9de5d9;background:#effbf8}
 .comparisonList>.improvingComparison span,.comparisonList>.improvingComparison span i{color:#2d716a}
 .finalCta{padding-top:72px;padding-bottom:104px}
+.teamSection{max-width:920px;margin:0 auto;padding:72px 32px 0}
+.teamSection .sectionCopy{margin-bottom:20px}
+.teamSection h2{font-size:clamp(28px,3vw,36px)}
+.teamLink{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--teal);font-size:16px;font-weight:650;text-decoration:underline;text-underline-offset:4px}
+.teamLink:hover{color:var(--teal-dark)}
+.teamLink:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
+@media(max-width:600px){.teamSection{padding:60px 20px 0}}
 .finalCta .primaryButton{margin-top:28px}
 .primaryButton:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 @media(max-width:600px){.hero,.liveSection,.reviewSection,.breakSection,.finalCta{padding-left:20px;padding-right:20px}.hero{padding-top:56px;padding-bottom:64px}.hero h1{font-size:38px}.lede{font-size:17px}.actions{flex-wrap:wrap;gap:17px}.liveSection{padding-bottom:64px}.sectionCopy{margin-bottom:24px}.livePanel{padding:26px 20px 24px;border-radius:15px}.livePanel h3{font-size:27px}.liveIntro{font-size:14px}.liveRow{grid-template-columns:112px 1fr;gap:10px}.liveRow strong{font-size:14px}.liveRow>span{grid-column:2;font-size:12px;text-align:left;margin-top:-8px}.liveFooter{align-items:flex-end;gap:14px}.liveFooter>span{font-size:12px}.liveFooter button{min-width:84px;padding:9px 17px}.facts{grid-template-columns:1fr;margin:0 20px;padding:10px 0;text-align:left}.facts span{padding:11px 0}.facts span+span{border-left:0;border-top:1px solid var(--line)}.reviewSection{padding-top:84px;padding-bottom:72px}.reviewShot{height:300px;border-radius:15px}.reviewShot img{object-position:center 54%}.breakSection{padding-bottom:0}.resetPanel{border-radius:15px}.compactMoment{grid-template-columns:1fr;gap:18px;padding:20px}.compactPreview{padding:15px 14px}.compactRow{grid-template-columns:70px minmax(80px,1fr) 72px;gap:8px}.compactRow>span{font-size:10px}.resetNotice{padding:23px 20px 20px}.resetNotice h3{font-size:21px}.resetSuggestion{align-items:flex-start;margin:0 20px;padding:20px;gap:16px}.resetSuggestionCopy h3{font-size:21px}.resetAction{flex-direction:column;align-items:flex-end;gap:8px}.resetAction button{min-width:82px;padding:9px 15px}.resetFollowUp{gap:16px;padding:20px}.resetComparison{padding:20px}.comparisonTimes{gap:8px}.comparisonTimes>div{padding:11px}.comparisonTimes strong{font-size:15px}.comparisonTimes>i{font-size:17px}.comparisonList>div{padding:10px 12px}.finalCta{padding-top:60px;padding-bottom:84px}}
