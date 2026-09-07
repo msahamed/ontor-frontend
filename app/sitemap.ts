@@ -24,12 +24,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ]
 
   // Published blog posts, added automatically as each post's status flips to "published".
-  const postRoutes: MetadataRoute.Sitemap = getPublishedPosts().map((p) => ({
-    url: `${BASE_URL}/blog/${p.slug}/`,
-    lastModified: (p.updated || p.date) ? new Date(p.updated || p.date) : lastModified,
-    changeFrequency: 'monthly',
-    priority: 0.7,
-  }))
+  // Never let a bad post / FS glitch 500 the whole sitemap for crawlers.
+  let postRoutes: MetadataRoute.Sitemap = []
+  try {
+    postRoutes = getPublishedPosts().map((p) => ({
+      url: `${BASE_URL}/blog/${p.slug}/`,
+      lastModified: (p.updated || p.date) ? new Date(p.updated || p.date) : lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }))
+  } catch (err) {
+    console.error('[sitemap] getPublishedPosts failed; returning static routes only', err)
+  }
 
   return [...staticRoutes, ...postRoutes]
 }

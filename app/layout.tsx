@@ -80,6 +80,7 @@ const ORG_JSONLD = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Ontor",
+  alternateName: ["Ontor AI", "ontor.ai"],
   url: "https://ontor.ai",
   logo: "https://ontor.ai/og.png",
   description:
@@ -117,12 +118,20 @@ const APP_JSONLD = {
     "Voice is analyzed on your device by default; nothing is uploaded unless you turn on optional sync",
     "Quick voice check-in on mobile, with pattern detection over your personal baseline",
   ],
-  offers: {
-    "@type": "Offer",
-    price: "20",
-    priceCurrency: "USD",
-    description: "$20/month after a 14-day free trial",
-  },
+  offers: [
+    {
+      "@type": "Offer",
+      price: "20",
+      priceCurrency: "USD",
+      description: "$20/month after a 14-day free trial (no card required to start)",
+    },
+    {
+      "@type": "Offer",
+      price: "168",
+      priceCurrency: "USD",
+      description: "$168/year after a 14-day free trial (about $14/month)",
+    },
+  ],
 };
 
 export default function RootLayout({
