@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { parsePostMeta, parseCatalogPost, parsePublishedCatalogRows, parsePublishedDiscoveryPosts, withEnsuredPublishedPosts, blogPostUrl, renderMarkdown, jsonLd, sha256, BLOG_PREFIX } from "../lib/blog-model.ts";
+import { parsePostMeta, parseCatalogPost, parsePublishedCatalogRows, parsePublishedDiscoveryPosts, withEnsuredPublishedPosts, blogPostUrl, renderSitemapXml, renderMarkdown, jsonLd, sha256, BLOG_PREFIX } from "../lib/blog-model.ts";
 import { prepareArticle } from "../scripts/migrate-blog-to-storage.mjs";
 
 const meta = { slug: "test-article", title: "Test", description: "Useful answer", date: "2026-09-07", status: "published" };
@@ -75,4 +75,10 @@ test("ensures known published discovery slugs without duplicating catalog hits",
   assert.equal(merged.filter(p => p.slug === "freight-sales-call-block-readiness").length, 1);
   assert.ok(merged.some(p => p.slug === "collections-cool-down-between-hostile-calls"));
   assert.equal(blogPostUrl("collections-cool-down-between-hostile-calls"), "https://ontor.ai/blog/collections-cool-down-between-hostile-calls/");
+});
+test("sitemap XML includes every discovery slug when the catalog is empty except ensures", () => {
+  const xml = renderSitemapXml(withEnsuredPublishedPosts([]), new Date("2026-09-08T12:00:00.000Z"));
+  assert.match(xml, /<loc>https:\/\/ontor.ai\/blog\/collections-cool-down-between-hostile-calls\/<\/loc>/);
+  assert.match(xml, /<loc>https:\/\/ontor.ai\/blog\/freight-sales-call-block-readiness\/<\/loc>/);
+  assert.match(xml, /<loc>https:\/\/ontor.ai\/<\/loc>/);
 });

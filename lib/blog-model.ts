@@ -213,3 +213,52 @@ export function postLastModified(post: Pick<PostMeta, "date" | "updated">, fallb
   const date = new Date(raw);
   return Number.isFinite(date.getTime()) ? date : fallback;
 }
+
+export const STATIC_SITEMAP_ROUTES: { path: string; changeFrequency: "weekly" | "monthly" | "yearly"; priority: number }[] = [
+  { path: "/", changeFrequency: "weekly", priority: 1 },
+  { path: "/how-it-works/", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/for-teams/", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/sales/", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/pricing/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/faq/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/install/", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/install/mac/", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/voice-biomarkers/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/voice-vs-wearables/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/blog/", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/about/", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/privacy/", changeFrequency: "yearly", priority: 0.5 },
+  { path: "/terms/", changeFrequency: "yearly", priority: 0.5 },
+];
+
+function escapeXml(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/** Same URL set as /sitemap.xml — static routes plus published catalog slugs. */
+export function renderSitemapXml(posts: PostMeta[], now = new Date()): string {
+  const urls = [
+    ...STATIC_SITEMAP_ROUTES.map((route) => ({
+      loc: `${SITE_ORIGIN}${route.path}`,
+      lastModified: now,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+    })),
+    ...posts.map((post) => ({
+      loc: blogPostUrl(post.slug),
+      lastModified: postLastModified(post, now),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+  ];
+  const body = urls.map((entry) => `<url>
+<loc>${escapeXml(entry.loc)}</loc>
+<lastmod>${entry.lastModified.toISOString()}</lastmod>
+<changefreq>${entry.changeFrequency}</changefreq>
+<priority>${entry.priority}</priority>
+</url>`).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${body}
+</urlset>`;
+}
