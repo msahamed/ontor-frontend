@@ -1,25 +1,27 @@
-// GET /llms.txt — refreshed through ISR and the publishing webhook.
+// GET /llms.txt — same published catalog as sitemap.xml (fresh Mongo read).
 //
-// The prose preamble is maintained here; the blog links are pulled from the
-// same source as the sitemap (`getPublishedPosts`), so publishing a post adds
-// it to llms.txt automatically. (Replaces the old hand-maintained
-// public/llms.txt — that file was deleted so it can't shadow this route.)
+// The prose preamble is maintained here; the blog links come from
+// getPublishedPostsForDiscovery(), so publishing a post adds it automatically.
+// (Replaces the old hand-maintained public/llms.txt — that file was deleted
+// so it can't shadow this route.)
+// Catalog outages must not 500: serve the preamble plus any known slugs, and
+// send no-store so an incomplete Blog posts section is not cached.
 
-import { getPublishedPosts } from "../../lib/blog";
+import { connection } from "next/server";
+import { SITE_ORIGIN, blogPostUrl, withEnsuredPublishedPosts } from "../../lib/blog-model";
+import { getPublishedPostsForDiscovery, type PostMeta } from "../../lib/blog";
 
-const BASE_URL = "https://ontor.ai";
+const BASE_URL = SITE_ORIGIN;
 
-// One descriptive line per published post. Uses each post's own title so the
-// list stays accurate without manual edits.
-export const revalidate = 3600;
+// Same uncached published catalog as sitemap.xml. Request-time so a new slug
+// is not omitted behind the hourly ISR snapshot.
+export const dynamic = "force-dynamic";
 
-async function postLinks(): Promise<string> {
-  return (await getPublishedPosts())
-    .map((p) => `- ${p.title}: ${BASE_URL}/blog/${p.slug}/`)
-    .join("\n");
+function postLinks(posts: PostMeta[]): string {
+  return posts.map((p) => `- ${p.title}: ${blogPostUrl(p.slug)}`).join("\n");
 }
 
-async function buildLlmsTxt(): Promise<string> {
+async function buildLlmsTxt(posts: PostMeta[]): Promise<string> {
   return `# Ontor
 
 > Ontor is performance intelligence from your voice. A desktop app that sits in your menu bar reads your nervous-system state — stress, energy, confidence, fatigue and more — from *how you sound* across real calls and meetings, in real time. It is speaker-gated: only your own voice is analyzed, never the other person's. There is also a few-second voice check-in on mobile. Everything runs on-device.
@@ -69,7 +71,7 @@ Salespeople and sales teams (rep-first performance intelligence for people who l
 
 ## Blog posts
 
-${await postLinks()}
+${postLinks(posts)}
 
 ## Contact
 
@@ -81,14 +83,32 @@ ${await postLinks()}
 
 export async function GET() {
   try {
-    return new Response(await buildLlmsTxt(), {
+    await connection();
+    let posts: PostMeta[] = [];
+    let catalogAvailable = false;
+    try {
+      const result = await getPublishedPostsForDiscovery();
+      posts = result.posts;
+      catalogAvailable = result.catalogAvailable;
+    } catch (err) {
+      console.error("[llms.txt] blog catalog unavailable", err);
+      posts = withEnsuredPublishedPosts([]);
+    }
+    return new Response(await buildLlmsTxt(posts), {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Cache-Control": catalogAvailable
+          ? "public, max-age=0, must-revalidate"
+          : "private, no-store",
       },
     });
-  } catch {
-    // Keep the last successful ISR response instead of caching an empty blog list.
-    throw new Error("[llms.txt] blog catalog unavailable");
+  } catch (err) {
+    console.error("[llms.txt] unexpected failure", err);
+    return new Response(await buildLlmsTxt(withEnsuredPublishedPosts([])), {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "private, no-store",
+      },
+    });
   }
 }

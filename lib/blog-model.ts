@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 
-export const BLOG_TAG = "ontor-blog-v1";
+export const BLOG_TAG = "ontor-blog-v2";
 export const BLOG_BUCKET = "healthos-exp";
 export const BLOG_PREFIX = "seo-growth/articles/";
 export const BLOG_DATABASE = "healthos";
@@ -42,19 +42,37 @@ export function safeUrl(value: string): boolean {
 function validDate(value: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
 }
+/** YYYY-MM-DD, plus Mongo Date / ISO datetime from publishing bots. */
+function catalogDay(value: unknown, name: string): string {
+  if (value instanceof Date && Number.isFinite(value.getTime())) {
+    const day = value.toISOString().slice(0, 10);
+    if (validDate(day)) return day;
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (validDate(trimmed)) return trimmed;
+    if (/^\d{4}-\d{2}-\d{2}T/.test(trimmed)) {
+      const parsed = Date.parse(trimmed);
+      if (Number.isFinite(parsed)) {
+        const day = new Date(parsed).toISOString().slice(0, 10);
+        if (validDate(day)) return day;
+      }
+    }
+  }
+  throw new Error(`Invalid blog ${name}`);
+}
 export function parsePostMeta(value: unknown): PostMeta {
   if (!value || typeof value !== "object") throw new Error("Invalid blog metadata");
   const d = value as Record<string, unknown>;
   const slug = text(d.slug, "slug", 150);
   if (!SLUG.test(slug)) throw new Error("Invalid blog slug");
-  const date = text(d.date, "date", 40);
-  if (!validDate(date)) throw new Error("Invalid blog date");
+  const date = catalogDay(d.date, "date");
   if (d.status !== "draft" && d.status !== "published") throw new Error("Explicit blog status required");
   const result: PostMeta = { slug, title: text(d.title, "title", 500), description: text(d.description, "description"), date, status: d.status };
-  for (const field of ["updated", "targetKeyword", "intent", "icp", "heroImage", "ogImage", "heroImageAlt"] as const) {
+  if (d.updated !== undefined) result.updated = catalogDay(d.updated, "updated");
+  for (const field of ["targetKeyword", "intent", "icp", "heroImage", "ogImage", "heroImageAlt"] as const) {
     if (d[field] !== undefined) result[field] = text(d[field], field);
   }
-  if (result.updated && !validDate(result.updated)) throw new Error("Invalid updated date");
   for (const field of ["heroImage", "ogImage"] as const) {
     if (result[field] && !safeUrl(result[field])) throw new Error("Unsafe blog image URL");
   }
@@ -95,6 +113,58 @@ export function parseCatalogPost(value: unknown): CatalogPost {
   if (new Set(assets.map(a => a.name)).size !== assets.length) throw new Error("Duplicate asset name");
   return { ...meta, schemaVersion: 1, version, s3Key: d.s3Key as string, sha256: checksum, assets };
 }
+function rowSlug(row: unknown): string {
+  return row && typeof row === "object" && typeof (row as { slug?: unknown }).slug === "string"
+    ? (row as { slug: string }).slug
+    : "unknown";
+}
+/**
+ * Listing/sitemap must not fail closed on one bad published row.
+ * A throwing `.map(parseCatalogPost)` 500s the sitemap and leaves ISR stuck on a stale URL set.
+ */
+export function parsePublishedCatalogRows(rows: unknown[]): CatalogPost[] {
+  const posts: CatalogPost[] = [];
+  for (const row of rows) {
+    try {
+      const post = parseCatalogPost(row);
+      if (post.status === "published") posts.push(post);
+    } catch {
+      console.error(`[blog] skipping invalid published catalog row: ${rowSlug(row)}`);
+    }
+  }
+  return posts;
+}
+function parseDiscoveryPost(row: unknown): PostMeta | undefined {
+  try {
+    const post = parseCatalogPost(row);
+    return post.status === "published" ? post : undefined;
+  } catch { /* full catalog parse is stricter than a public URL list */ }
+  try {
+    const meta = parsePostMeta(row);
+    return meta.status === "published" ? meta : undefined;
+  } catch { /* last-resort slug so a live published URL is not dropped */ }
+  if (!row || typeof row !== "object") return undefined;
+  const d = row as Record<string, unknown>;
+  if (d.status !== "published" || typeof d.slug !== "string" || d.slug.length > 150 || !SLUG.test(d.slug)) return undefined;
+  const title = typeof d.title === "string" && d.title.trim() ? d.title.trim().slice(0, 500) : d.slug;
+  const description = typeof d.description === "string" && d.description.trim() ? d.description.trim().slice(0, 5000) : title;
+  let date: string;
+  try { date = catalogDay(d.date, "date"); } catch { date = new Date().toISOString().slice(0, 10); }
+  console.error(`[blog] discovery fallback for published slug ${d.slug}`);
+  return { slug: d.slug, title, description, date, status: "published" };
+}
+/** Slug/title list for sitemap.xml and llms.txt — includes rows the full catalog parser rejects. */
+export function parsePublishedDiscoveryPosts(rows: unknown[]): PostMeta[] {
+  const posts: PostMeta[] = [];
+  const seen = new Set<string>();
+  for (const row of rows) {
+    const post = parseDiscoveryPost(row);
+    if (!post || seen.has(post.slug)) continue;
+    seen.add(post.slug);
+    posts.push(post);
+  }
+  return posts;
+}
 export function renderMarkdown(markdown: string): string {
   if (Buffer.byteLength(markdown) > MAX_ARTICLE_BYTES) throw new Error("Article too large");
   // Bot-authored HTML is data, never executable JS, MDX, SVG or CSS.
@@ -106,4 +176,89 @@ export function renderMarkdown(markdown: string): string {
 }
 export function jsonLd(value: unknown): string {
   return JSON.stringify(value).replace(/</g, "\\u003c");
+}
+
+export const SITE_ORIGIN = "https://ontor.ai";
+/** Known-live published slugs that ISR has dropped before. Not substitutes for the catalog. */
+export const ENSURE_PUBLISHED_POSTS: { slug: string; title: string }[] = [
+  {
+    slug: "freight-sales-call-block-readiness",
+    title: "Freight sales leaders can see dials. They still miss readiness between call blocks.",
+  },
+  {
+    slug: "collections-cool-down-between-hostile-calls",
+    title: "Collections leaders can see dials and recovery rates. They still miss readiness after a hostile call.",
+  },
+];
+export function blogPostUrl(slug: string): string {
+  return `${SITE_ORIGIN}/blog/${slug}/`;
+}
+export function withEnsuredPublishedPosts(posts: PostMeta[]): PostMeta[] {
+  const have = new Set(posts.map((p) => p.slug));
+  const extra: PostMeta[] = [];
+  for (const known of ENSURE_PUBLISHED_POSTS) {
+    if (have.has(known.slug) || !SLUG.test(known.slug)) continue;
+    extra.push({
+      slug: known.slug,
+      title: known.title,
+      description: known.title,
+      date: new Date().toISOString().slice(0, 10),
+      status: "published",
+    });
+  }
+  return extra.length ? [...posts, ...extra] : posts;
+}
+export function postLastModified(post: Pick<PostMeta, "date" | "updated">, fallback: Date): Date {
+  const raw = post.updated || post.date;
+  const date = new Date(raw);
+  return Number.isFinite(date.getTime()) ? date : fallback;
+}
+
+export const STATIC_SITEMAP_ROUTES: { path: string; changeFrequency: "weekly" | "monthly" | "yearly"; priority: number }[] = [
+  { path: "/", changeFrequency: "weekly", priority: 1 },
+  { path: "/how-it-works/", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/for-teams/", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/sales/", changeFrequency: "monthly", priority: 0.9 },
+  { path: "/pricing/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/faq/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/install/", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/install/mac/", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/voice-biomarkers/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/voice-vs-wearables/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/blog/", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/about/", changeFrequency: "monthly", priority: 0.6 },
+  { path: "/privacy/", changeFrequency: "yearly", priority: 0.5 },
+  { path: "/terms/", changeFrequency: "yearly", priority: 0.5 },
+];
+
+function escapeXml(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+/** Same URL set as /sitemap.xml — static routes plus published catalog slugs. */
+export function renderSitemapXml(posts: PostMeta[], now = new Date()): string {
+  const urls = [
+    ...STATIC_SITEMAP_ROUTES.map((route) => ({
+      loc: `${SITE_ORIGIN}${route.path}`,
+      lastModified: now,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+    })),
+    ...posts.map((post) => ({
+      loc: blogPostUrl(post.slug),
+      lastModified: postLastModified(post, now),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+  ];
+  const body = urls.map((entry) => `<url>
+<loc>${escapeXml(entry.loc)}</loc>
+<lastmod>${entry.lastModified.toISOString()}</lastmod>
+<changefreq>${entry.changeFrequency}</changefreq>
+<priority>${entry.priority}</priority>
+</url>`).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${body}
+</urlset>`;
 }

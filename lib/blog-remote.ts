@@ -2,7 +2,7 @@ import "server-only";
 import { MongoClient } from "mongodb";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { unstable_cache } from "next/cache";
-import { BLOG_BUCKET, BLOG_COLLECTION, BLOG_DATABASE, BLOG_TAG, MAX_ARTICLE_BYTES, MAX_ASSET_BYTES, parseCatalogPost, renderMarkdown, sha256, SLUG, type CatalogPost } from "./blog-model";
+import { BLOG_BUCKET, BLOG_COLLECTION, BLOG_DATABASE, BLOG_TAG, MAX_ARTICLE_BYTES, MAX_ASSET_BYTES, parseCatalogPost, parsePublishedCatalogRows, parsePublishedDiscoveryPosts, renderMarkdown, sha256, SLUG, type CatalogPost, type PostMeta } from "./blog-model";
 
 let mongo: Promise<MongoClient> | undefined;
 let s3: S3Client | undefined;
@@ -36,11 +36,19 @@ export async function readBlogObject(key: string, checksum: string, maxBytes = M
   if (bytes.byteLength > maxBytes || sha256(bytes) !== checksum) throw new Error("Blog object checksum mismatch");
   return bytes;
 }
+async function publishedCatalogRows() {
+  // No tighter limit: a cap below the real published count would omit new slugs from listings.
+  return (await catalog()).find({ status: "published" }, { projection: { _id: 0 } }).sort({ date: -1, slug: 1 }).limit(10000).toArray();
+}
+async function loadPublishedCatalog(): Promise<CatalogPost[]> {
+  return parsePublishedCatalogRows(await publishedCatalogRows());
+}
+/** Uncached published slug/title list for sitemap.xml and llms.txt. */
+export async function loadPublishedDiscoveryPosts(): Promise<PostMeta[]> {
+  return parsePublishedDiscoveryPosts(await publishedCatalogRows());
+}
 // Compatible with this project's existing non-Cache-Components configuration.
-export const getRemoteCatalog = unstable_cache(async (): Promise<CatalogPost[]> => {
-  const rows = await (await catalog()).find({ status: "published" }, { projection: { _id: 0 } }).sort({ date: -1, slug: 1 }).limit(10000).toArray();
-  return rows.map(parseCatalogPost);
-}, [BLOG_TAG, "catalog"], { revalidate: 3600, tags: [BLOG_TAG] });
+export const getRemoteCatalog = unstable_cache(loadPublishedCatalog, [BLOG_TAG, "catalog"], { revalidate: 3600, tags: [BLOG_TAG] });
 export const getRemoteRecord = unstable_cache(async (slug: string): Promise<CatalogPost | null> => {
   if (!SLUG.test(slug) || slug.length > 150) return null;
   const row = await (await catalog()).findOne({ slug, status: "published" }, { projection: { _id: 0 } });
