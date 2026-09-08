@@ -4,6 +4,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { parsePostMeta, parseCatalogPost, renderMarkdown, jsonLd, sha256, BLOG_PREFIX } from "../lib/blog-model.ts";
+import { blogPostUrl, renderSitemapXml, sitemapBlogLocs, sitemapEntries } from "../lib/sitemap-entries.ts";
 import { prepareArticle } from "../scripts/migrate-blog-to-storage.mjs";
 
 const meta = { slug: "test-article", title: "Test", description: "Useful answer", date: "2026-09-07", status: "published" };
@@ -32,6 +33,21 @@ test("JSON-LD cannot close its script element", () => {
   const result = jsonLd({ title: '</script><script>alert(1)</script>' });
   assert.ok(!result.includes("<"));
   assert.equal(JSON.parse(result).title, '</script><script>alert(1)</script>');
+});
+test("sitemap blog locs follow the published catalog, including new slugs", () => {
+  const posts = [
+    { slug: "freight-sales-call-block-readiness", date: "2026-09-08" },
+    { slug: "nervous-system-coaching-risks", date: "2026-07-29" },
+  ];
+  const locs = sitemapBlogLocs(posts);
+  assert.deepEqual(locs, [
+    "https://ontor.ai/blog/freight-sales-call-block-readiness/",
+    "https://ontor.ai/blog/nervous-system-coaching-risks/",
+  ]);
+  const xml = renderSitemapXml(sitemapEntries(posts, new Date("2026-09-08T00:00:00.000Z")));
+  for (const loc of locs) assert.match(xml, new RegExp(`<loc>${loc}</loc>`));
+  assert.match(xml, /<loc>https:\/\/ontor.ai\/blog\/<\/loc>/);
+  assert.equal(blogPostUrl("freight-sales-call-block-readiness"), locs[0]);
 });
 test("migration is deterministic, rewrites media, and rejects escaping assets", async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), "ontor-blog-test-"));
