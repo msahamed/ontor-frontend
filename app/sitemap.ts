@@ -41,5 +41,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     throw err
   }
 
-  return [...staticRoutes, ...postRoutes]
+  const entries = [...staticRoutes, ...postRoutes]
+  const freight = `${BASE_URL}/blog/freight-sales-call-block-readiness/`
+  if (!entries.some((e) => e.url === freight)) {
+    entries.push({ url: freight, lastModified, changeFrequency: 'monthly', priority: 0.7 })
+  }
+  return entries
 }
