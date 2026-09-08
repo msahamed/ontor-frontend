@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { parsePostMeta, parseCatalogPost, renderMarkdown, jsonLd, sha256, BLOG_PREFIX } from "../lib/blog-model.ts";
+import { parsePostMeta, parseCatalogPost, parsePublishedCatalogRows, parsePublishedDiscoveryPosts, withEnsuredPublishedPosts, blogPostUrl, renderMarkdown, jsonLd, sha256, BLOG_PREFIX } from "../lib/blog-model.ts";
 import { prepareArticle } from "../scripts/migrate-blog-to-storage.mjs";
 
 const meta = { slug: "test-article", title: "Test", description: "Useful answer", date: "2026-09-07", status: "published" };
@@ -50,4 +50,29 @@ test("migration is deterministic, rewrites media, and rejects escaping assets", 
     await fs.writeFile(filename, source.replaceAll("/hero.png", "/../index.md"));
     await assert.rejects(prepareArticle(filename, pub));
   } finally { await fs.rm(dir, { recursive: true, force: true }); }
+});
+test("accepts Mongo Date and ISO datetime catalog fields", () => {
+  assert.equal(parsePostMeta({ ...meta, date: new Date("2026-09-08T00:00:00.000Z") }).date, "2026-09-08");
+  assert.equal(parsePostMeta({ ...meta, date: "2026-09-08T12:00:00.000Z" }).date, "2026-09-08");
+  assert.equal(parsePostMeta({ ...meta, updated: new Date("2026-09-08T00:00:00.000Z") }).updated, "2026-09-08");
+});
+test("published catalog listing skips a bad row instead of dropping the rest", () => {
+  const good = parseCatalogPost(record);
+  const rows = [record, { ...record, slug: "bad-article", s3Key: "observations/private.md" }, { status: "published" }];
+  assert.deepEqual(parsePublishedCatalogRows(rows), [good]);
+});
+test("discovery listing keeps a published slug when the full catalog parse fails", () => {
+  const rows = [
+    record,
+    { slug: "collections-cool-down-between-hostile-calls", title: "Collections leaders can see dials and recovery rates. They still miss readiness after a hostile call.", description: "Ready after a hostile call.", date: "2026-09-08", status: "published", s3Key: "wrong" },
+  ];
+  const slugs = parsePublishedDiscoveryPosts(rows).map(p => p.slug);
+  assert.deepEqual(slugs, ["test-article", "collections-cool-down-between-hostile-calls"]);
+});
+test("ensures known published discovery slugs without duplicating catalog hits", () => {
+  const fromCatalog = [{ ...meta, slug: "freight-sales-call-block-readiness", title: "Freight" }];
+  const merged = withEnsuredPublishedPosts(fromCatalog);
+  assert.equal(merged.filter(p => p.slug === "freight-sales-call-block-readiness").length, 1);
+  assert.ok(merged.some(p => p.slug === "collections-cool-down-between-hostile-calls"));
+  assert.equal(blogPostUrl("collections-cool-down-between-hostile-calls"), "https://ontor.ai/blog/collections-cool-down-between-hostile-calls/");
 });
