@@ -73,6 +73,11 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: ["/og.png?v=2"],
   },
+  verification: {
+    other: {
+      "msvalidate.01": "DBFE6F95DE3C756EBE07601277491FBA",
+    },
+  },
 };
 
 // ── Site-wide structured data (GEO / AI answer engines) ──
