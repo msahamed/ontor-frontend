@@ -39,7 +39,7 @@
 // the doc hasn't changed locally.
 
 import { NextResponse } from "next/server";
-import { sanitizeCaptureMetadata, capturePreservingReplacement } from "@/lib/capture-metadata";
+import { sanitizeMicroCues, sanitizeCaptureMetadata, capturePreservingReplacement } from "@/lib/capture-metadata";
 import { getMongoClient } from "@/lib/mongodb";
 import { authorizeUser } from "@/lib/auth";
 import { revalidateTag } from "next/cache";
@@ -87,6 +87,7 @@ interface ObservationDoc {
   // Per-segment marker timeline ({t, m, cov, vad, q} entries) — powers the
   // within-session trend chart on restore. Optional; absent on old docs.
   frames?: unknown[];
+  micro_cues?: {datetime: string; cue: string}[];
   // Raw per-marker thumbs map ({markerId: 1|-1} + the session self-report
   // key) — restored verbatim so ratings survive a device change.
   marker_ratings?: Record<string, unknown>;
@@ -128,6 +129,7 @@ interface IncomingObservation {
   markers?: Record<string, unknown>;
   voice_clip?: Record<string, unknown> | null;
   frames?: unknown[];
+  micro_cues?: {datetime: string; cue: string}[];
   marker_ratings?: Record<string, unknown>;
 }
 
@@ -186,6 +188,7 @@ function sanitize(raw: unknown, expectedUserId: string): IncomingObservation | n
       ? null
       : undefined,
     frames: Array.isArray(r.frames) ? r.frames : undefined,
+    micro_cues: sanitizeMicroCues(r.micro_cues),
     marker_ratings: isPlainObject(r.marker_ratings)
       ? r.marker_ratings
       : undefined,
@@ -201,10 +204,8 @@ function toDoc(o: IncomingObservation): ObservationDoc {
     updated_at: new Date(o.updated_at),
     deleted_at: o.deleted_at ? new Date(o.deleted_at) : null,
     transcript: o.transcript ?? null,
-    app_version: o.app_version ?? null,
-    ...(o.capture_metadata && { capture_metadata: o.capture_metadata }),
+    app_version: typeof o.capture_metadata?.app_version === "string" ? o.capture_metadata.app_version : o.app_version ?? null,
     platform: typeof o.capture_metadata?.platform === "string" ? o.capture_metadata.platform : o.platform ?? null,
-    ...(o.upload_platform !== undefined && { upload_platform: o.upload_platform }),
     extraction: o.extraction ?? {},
     signals: o.signals ?? {},
     markers: o.markers ?? {},
@@ -220,6 +221,7 @@ function toDoc(o: IncomingObservation): ObservationDoc {
       reset_completed_at: new Date(o.reset_completed_at),
     }),
     ...(o.frames !== undefined && { frames: o.frames }),
+    ...(o.micro_cues !== undefined && { micro_cues: o.micro_cues }),
     ...(o.marker_ratings !== undefined && { marker_ratings: o.marker_ratings }),
     received_at: new Date(),
   };
