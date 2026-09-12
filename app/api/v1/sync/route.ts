@@ -39,6 +39,7 @@
 // the doc hasn't changed locally.
 
 import { NextResponse } from "next/server";
+import { sanitizeCaptureMetadata, capturePreservingReplacement } from "@/lib/capture-metadata";
 import { getMongoClient } from "@/lib/mongodb";
 import { authorizeUser } from "@/lib/auth";
 import { revalidateTag } from "next/cache";
@@ -76,7 +77,9 @@ interface ObservationDoc {
   reset_exercise_id?: string | null;
   reset_completed_at?: Date | null;
   app_version: string | null;
+  capture_metadata?: Record<string, unknown> | null;
   platform: string | null;
+  upload_platform?: string | null;
   extraction: Record<string, unknown>;
   signals: Record<string, unknown>;
   markers: Record<string, unknown>;
@@ -117,7 +120,9 @@ interface IncomingObservation {
   reset_exercise_id?: string;
   reset_completed_at?: string;
   app_version?: string;
+  capture_metadata?: Record<string, unknown>;
   platform?: string;
+  upload_platform?: string;
   extraction?: Record<string, unknown>;
   signals?: Record<string, unknown>;
   markers?: Record<string, unknown>;
@@ -169,7 +174,9 @@ function sanitize(raw: unknown, expectedUserId: string): IncomingObservation | n
         ? r.reset_completed_at
         : undefined,
     app_version: typeof r.app_version === "string" ? r.app_version : undefined,
+    capture_metadata: sanitizeCaptureMetadata(r.capture_metadata),
     platform: typeof r.platform === "string" ? r.platform : undefined,
+    upload_platform: typeof r.upload_platform === "string" ? r.upload_platform : undefined,
     extraction: isPlainObject(r.extraction) ? r.extraction : undefined,
     signals: isPlainObject(r.signals) ? r.signals : undefined,
     markers: isPlainObject(r.markers) ? r.markers : undefined,
@@ -195,7 +202,9 @@ function toDoc(o: IncomingObservation): ObservationDoc {
     deleted_at: o.deleted_at ? new Date(o.deleted_at) : null,
     transcript: o.transcript ?? null,
     app_version: o.app_version ?? null,
-    platform: o.platform ?? null,
+    ...(o.capture_metadata && { capture_metadata: o.capture_metadata }),
+    platform: typeof o.capture_metadata?.platform === "string" ? o.capture_metadata.platform : o.platform ?? null,
+    ...(o.upload_platform !== undefined && { upload_platform: o.upload_platform }),
     extraction: o.extraction ?? {},
     signals: o.signals ?? {},
     markers: o.markers ?? {},
@@ -280,13 +289,12 @@ export async function POST(req: Request) {
   const deletes = valid.filter((o) => o.deleted_at != null);
   const upserts = valid.filter((o) => o.deleted_at == null);
 
-  // bulkWrite with replaceOne(upsert) per doc. Each push is a full-doc
-  // state replacement — devices send the canonical state of their rows,
-  // never diffs. Last-write-wins falls out naturally.
+  // Full-document replacement, retaining the original capture provenance
+  // atomically when older clients or newer uploaders resync the same record.
   const ops: AnyBulkWriteOperation<ObservationDoc>[] = upserts.map((o) => ({
-    replaceOne: {
+    updateOne: {
       filter: { _id: o._id },
-      replacement: toDoc(o),
+      update: capturePreservingReplacement(toDoc(o), true),
       upsert: true,
     },
   }));

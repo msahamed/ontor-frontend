@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { sanitizeCaptureMetadata, capturePreservingReplacement } from "@/lib/capture-metadata";
 import type { AnyBulkWriteOperation } from "mongodb";
 
 import { authorizeUser } from "@/lib/auth";
@@ -19,6 +20,7 @@ interface ResetSessionDoc {
   status: "completed" | "ended_early";
   progress: number;
   source_observation_uuid: string | null;
+  capture_metadata?: Record<string, unknown>;
   created_at: Date;
   updated_at: Date;
   received_at: Date;
@@ -73,6 +75,7 @@ function sanitize(raw: unknown, userId: string): ResetSessionDoc | null {
     status,
     progress,
     source_observation_uuid: source,
+    capture_metadata: sanitizeCaptureMetadata(value.capture_metadata),
     created_at: createdAt,
     updated_at: updatedAt,
     received_at: new Date(),
@@ -109,11 +112,10 @@ export async function POST(req: Request) {
     .filter((row): row is ResetSessionDoc => row !== null);
   const operations: AnyBulkWriteOperation<ResetSessionDoc>[] = valid.map(
     (row) => ({
-      replaceOne: {
-        // Reset sessions are immutable once Done is pressed. Replacing the
-        // same UUID makes retries idempotent without an update-order race.
+      updateOne: {
+        // Same UUID makes retries idempotent; preserve original capture metadata.
         filter: { _id: row._id },
-        replacement: row,
+        update: capturePreservingReplacement(row),
         upsert: true,
       },
     }),
