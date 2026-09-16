@@ -51,7 +51,6 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://ontor.ai"),
   title: "Ontor — Performance intelligence from your voice",
   description: DESCRIPTION,
-  alternates: { canonical: "/" },
   openGraph: {
     title: "Ontor — Performance intelligence from your voice",
     description: DESCRIPTION,

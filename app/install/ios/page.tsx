@@ -12,6 +12,7 @@ import { IOS_LINK, isInvited } from "../_lib/gate";
 // in the sitemap or site nav.
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/install/ios/" },
   title: "Install Ontor for iPhone (beta)",
   description: "TestFlight setup steps for Ontor beta access on iPhone.",
   robots: { index: false, follow: false },

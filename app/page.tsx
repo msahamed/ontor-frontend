@@ -1,9 +1,14 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import ProductLoop from "./components/landing/ProductLoop";
 import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 const START_FREE = "/install";
 

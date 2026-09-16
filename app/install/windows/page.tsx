@@ -11,6 +11,7 @@ const WINDOWS_INSTALLER_URL =
   "https://ontor.ai/downloads/windows/Ontor-Setup.exe";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/install/windows/" },
   title: "Install Ontor for Windows",
   description: "Download the Ontor desktop beta for Windows.",
 };

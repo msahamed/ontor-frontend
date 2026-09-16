@@ -17,6 +17,7 @@ import { extractEmail, type SearchParams } from "../_lib/query";
 const MAC_DMG_URL = "https://ontor.ai/downloads/mac/Ontor.dmg";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/install/mac/" },
   title: "Install Ontor for Mac",
   description:
     "Download Ontor for Mac. One .dmg, drag it into Applications, and you're set. Notarized by Apple, updates itself.",

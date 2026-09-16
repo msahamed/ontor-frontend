@@ -12,6 +12,7 @@ import { ANDROID_LINK, isInvited } from "../_lib/gate";
 // not in the sitemap or site nav.
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/install/android/" },
   title: "Install Ontor for Android (beta)",
   description: "Play Store tester setup steps for Ontor beta access on Android.",
   robots: { index: false, follow: false },

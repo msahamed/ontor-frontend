@@ -9,6 +9,7 @@ import InstallFooter from "./_components/InstallFooter";
 import { LaptopIcon, DownloadIcon, WindowsIcon } from "./_components/icons";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/install/" },
   title: "Install Ontor",
   description: "Download Ontor for Mac or Windows. Try it free for 14 days, with no card required.",
 };

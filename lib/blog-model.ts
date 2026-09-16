@@ -223,6 +223,7 @@ export const STATIC_SITEMAP_ROUTES: { path: string; changeFrequency: "weekly" | 
   { path: "/faq/", changeFrequency: "monthly", priority: 0.8 },
   { path: "/install/", changeFrequency: "monthly", priority: 0.7 },
   { path: "/install/mac/", changeFrequency: "monthly", priority: 0.7 },
+  { path: "/install/windows/", changeFrequency: "monthly", priority: 0.7 },
   { path: "/voice-biomarkers/", changeFrequency: "monthly", priority: 0.8 },
   { path: "/voice-vs-wearables/", changeFrequency: "monthly", priority: 0.8 },
   { path: "/blog/", changeFrequency: "weekly", priority: 0.7 },
