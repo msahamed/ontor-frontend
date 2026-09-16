@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 import ProductLoop from "./components/landing/ProductLoop";
 import styles from "./page.module.css";
 
-const START_FREE = "/login/?next=/dashboard/subscription/";
+const START_FREE = "/install";
 
 const liveSignals = [
   ["Energy", "In range", 48, false],
@@ -46,6 +46,10 @@ export default function Home() {
             <p className={styles.trialNote}>Download for Mac or Windows. 14 days free. No card required.</p>
           </div>
           <ProductLoop />
+          <div className={styles.demoCta}>
+            <Link className={styles.primaryButton} href="/install">Try Ontor free</Link>
+            <p className={styles.trialNote}>Download for Mac or Windows. 14 days free. No card required.</p>
+          </div>
         </section>
 
         <section className={styles.liveSection} id="how">

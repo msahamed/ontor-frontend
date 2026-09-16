@@ -105,7 +105,7 @@ export default function Nav() {
         </nav>
 
         <Link
-          href={signedIn ? "/dashboard/" : "/login/?next=/dashboard/subscription/"}
+          href={signedIn ? "/dashboard/" : "/install"}
           style={{
             fontFamily: "inherit",
             fontSize: 14,

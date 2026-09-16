@@ -26,6 +26,9 @@ export default function DownloadLink({
         trackWebsiteEvent("installer_download", {
           platform,
           file_name: fileName,
+          page_path: window.location.pathname,
+          link_url: href,
+          transport_type: "beacon",
         })
       }
     >

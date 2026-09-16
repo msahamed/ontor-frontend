@@ -4,21 +4,13 @@ import type { Metadata } from "next";
 import { getSessionFromCookies } from "@/lib/auth";
 import { extractEmail, withEmail, type SearchParams } from "./_lib/query";
 import { INSTALL_SHARED_CSS } from "./_lib/shared-css";
-import PlatformTile from "./_components/PlatformTile";
+import DownloadLink from "./_components/DownloadLink";
 import InstallFooter from "./_components/InstallFooter";
-import { LaptopIcon, PhoneIcon, AndroidIcon, WindowsIcon } from "./_components/icons";
-
-// ── /install: platform chooser, the front door for all installs.
-// Public and indexable — replaces the old single gated page. Everyone
-// lands here first and picks a platform. Desktop builds are the primary,
-// public path; iOS and Android remain a quieter, invite-only path.
-//
-// Supports ?email=<their@gmail.com> from invite emails, forwarded onto
-// every tile so the platform page never has to ask again.
+import { LaptopIcon, DownloadIcon, WindowsIcon } from "./_components/icons";
 
 export const metadata: Metadata = {
   title: "Install Ontor",
-  description: "Get Ontor for Mac or Windows. iPhone and Android are currently available by invitation.",
+  description: "Download Ontor for Mac or Windows. Try it free for 14 days, with no card required.",
 };
 
 export default async function InstallChooserPage({
@@ -39,12 +31,11 @@ export default async function InstallChooserPage({
       <main id="top" className="flex-1">
         <section className="ch-hero">
           <div className="inst-wrap">
-            <p className="ch-eyebrow">Install Ontor</p>
-            <h1 className="font-serif-display">Use Ontor on your computer.</h1>
+            <h1 className="font-serif-display">Install Ontor.</h1>
             <p>
-              Download Ontor for Mac or Windows. Mobile builds are still
-              limited to invited testers.
+              See your voice signals during conversations and try a short reset when they shift.
             </p>
+            <p className="ch-trial-note">14 days free. No card required.</p>
           </div>
         </section>
 
@@ -56,23 +47,29 @@ export default async function InstallChooserPage({
                 <span>Install Ontor on this computer, or continue to your account.</span>
               </div>
             )}
-            <div className="ch-primary">
-              <PlatformTile
-                href={link("/install/mac")}
-                state="live"
-                icon={<LaptopIcon />}
-                title="Mac"
-                description="Notarized download for macOS 14 or later."
-                ctaLabel="Download for Mac"
-              />
-              <PlatformTile
-                href={link("/install/windows")}
-                state="live"
-                icon={<WindowsIcon />}
-                title="Windows"
-                description="Beta installer for 64-bit Windows 10 or later."
-                ctaLabel="Download for Windows"
-              />
+            <div className="ch-primary" aria-label="Desktop downloads">
+              <article className="ch-platform">
+                <div className="ch-platform-heading">
+                  <span className="ch-icon" aria-hidden="true"><LaptopIcon /></span>
+                  <div><h2>Mac</h2><p>macOS 14 or later · Apple silicon and Intel</p></div>
+                </div>
+                <DownloadLink className="ch-download" href="https://ontor.ai/downloads/mac/Ontor.dmg" platform="macos" fileName="Ontor.dmg">
+                  <DownloadIcon /> Download for Mac
+                </DownloadLink>
+                <p className="ch-setup">Open the .dmg and drag Ontor into Applications. Notarized by Apple.</p>
+                <Link className="ch-help" href={link("/install/mac")}>Mac setup instructions</Link>
+              </article>
+              <article className="ch-platform">
+                <div className="ch-platform-heading">
+                  <span className="ch-icon" aria-hidden="true"><WindowsIcon /></span>
+                  <div><h2>Windows <span className="ch-beta">Beta</span></h2><p>64-bit Windows 10 or later</p></div>
+                </div>
+                <DownloadLink className="ch-download" href="https://ontor.ai/downloads/windows/Ontor-Setup.exe" platform="windows" fileName="Ontor-Setup.exe">
+                  <DownloadIcon /> Download for Windows
+                </DownloadLink>
+                <p className="ch-setup">Open the .exe to install. This beta is unsigned, so Windows may show a SmartScreen prompt.</p>
+                <Link className="ch-help" href={link("/install/windows")}>Windows setup instructions</Link>
+              </article>
             </div>
 
             {session && (
@@ -81,33 +78,11 @@ export default async function InstallChooserPage({
               </Link>
             )}
 
-            <div className="ch-private">
-              <div className="ch-private-copy">
-                <h2>Mobile access is private for now.</h2>
-                <p>
-                  Already invited? Open the setup instructions for your phone
-                  using the email address from your invitation.
-                </p>
-              </div>
-              <div className="ch-private-platforms">
-                <PlatformTile
-                  href={link("/install/ios")}
-                  state="locked"
-                  icon={<PhoneIcon />}
-                  title="iPhone"
-                  description="Available to invited testers through TestFlight."
-                  ctaLabel="iPhone setup"
-                />
-                <PlatformTile
-                  href={link("/install/android")}
-                  state="locked"
-                  icon={<AndroidIcon />}
-                  title="Android"
-                  description="Available to invited testers through Google Play."
-                  ctaLabel="Android setup"
-                />
-              </div>
-            </div>
+            <details className="ch-mobile">
+              <summary>Invited to test on mobile?</summary>
+              <p>Use the email address from your invitation to open your setup instructions.</p>
+              <div><Link href={link("/install/ios")}>iPhone setup</Link><Link href={link("/install/android")}>Android setup</Link></div>
+            </details>
           </div>
         </section>
       </main>
@@ -120,87 +95,36 @@ export default async function InstallChooserPage({
 }
 
 const CHOOSER_CSS = `
-.ch-hero {
-  padding: 88px 0 58px; background: var(--paper);
-}
-.ch-eyebrow {
-  margin: 0 0 15px; color: var(--teal); font-size: 12px; font-weight: 700;
-  letter-spacing: .14em; text-transform: uppercase;
-}
-.ch-hero h1 {
-  max-width: 760px; margin: 0; color: var(--ink); font-size: clamp(40px, 5.4vw, 64px);
-  font-weight: 800; line-height: 1.03; letter-spacing: -.034em; text-wrap: balance;
-}
-.ch-hero .inst-wrap > p:last-child {
-  max-width: 620px; margin: 24px 0 0; color: var(--ink-soft); font-size: 19px; line-height: 1.55;
-}
-
-.inst-body { padding: 0 0 96px; background: var(--paper); }
-.ch-trial-started {
-  display: flex; justify-content: space-between; gap: 20px; margin: 0 0 20px;
-  padding: 15px 18px; border-radius: 12px; background: var(--teal-surface); color: var(--teal-dark);
-  font-size: 14px;
-}
-.ch-trial-started span { color: var(--ink-soft); }
-.ch-primary { display: grid; gap: 14px; }
-.ch-tile {
-  display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; grid-template-areas:
-    "icon badge cta" "icon title cta" "icon copy cta";
-  column-gap: 18px; align-items: center; padding: 24px 26px; border: 1px solid var(--line);
-  border-radius: 14px; background: #fff; color: inherit; text-decoration: none;
-  transition: border-color .18s ease, background .18s ease;
-}
-.ch-tile:hover { border-color: var(--teal); background: #FCFEFD; }
-.ch-tile:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
-.ch-icon {
-  grid-area: icon; display: grid; width: 48px; height: 48px; place-items: center;
-  border-radius: 12px; background: var(--teal-surface); color: var(--ink);
-}
-.ch-tile.is-live .ch-icon { color: var(--teal-dark); }
-.ch-tile .inst-badge { grid-area: badge; justify-self: start; margin-bottom: 5px; }
-.ch-tile h3 { grid-area: title; margin: 0; color: var(--ink); font-size: 22px; font-weight: 750; }
-.ch-tile p { grid-area: copy; margin: 2px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
-.ch-cta {
-  grid-area: cta; display: inline-flex; align-items: center; gap: 7px; min-height: 44px;
-  padding: 0 17px; border-radius: 11px; font-size: 14px; font-weight: 700;
-}
-.ch-cta.is-live { background: var(--teal); color: #fff; }
-.ch-cta.is-quiet { color: var(--ink-soft); }
-.ch-dashboard-link {
-  display: inline-block; margin-top: 20px; color: var(--teal); font-size: 14px;
-  font-weight: 700; text-decoration: none;
-}
-.ch-dashboard-link:hover { color: var(--teal-dark); }
-
-.ch-private { margin-top: 72px; padding-top: 38px; border-top: 1px solid var(--line); }
-.ch-private-copy { max-width: 600px; }
-.ch-private-copy h2 {
-  margin: 0; color: var(--ink); font-size: clamp(27px, 3.4vw, 38px); font-weight: 800;
-  line-height: 1.1; letter-spacing: -.025em;
-}
-.ch-private-copy p { margin: 14px 0 0; color: var(--ink-soft); font-size: 16px; line-height: 1.6; }
-.ch-private-platforms { display: grid; gap: 10px; margin-top: 26px; }
-.ch-private .ch-tile { padding: 18px 20px; }
-.ch-private .ch-icon { width: 42px; height: 42px; background: var(--paper-2); color: var(--ink-soft); }
-.ch-private .ch-tile h3 { font-size: 17px; }
-.ch-private .ch-tile p { font-size: 13px; }
-.ch-private .inst-badge { display: none; }
-.ch-private .ch-cta { min-height: auto; padding: 0; font-size: 13px; }
-
+.ch-hero { padding: 64px 0 32px; background: var(--paper); }
+.ch-hero h1 { margin: 0; color: var(--ink); font-size: clamp(40px, 5.4vw, 60px); font-weight: 800; line-height: 1.08; letter-spacing: -.034em; }
+.ch-hero p { max-width: 580px; margin: 18px 0 0; color: var(--ink-soft); font-size: 18px; line-height: 1.55; }
+.ch-hero .ch-trial-note { margin-top: 12px; color: var(--teal-dark); font-size: 15px; font-weight: 600; }
+.inst-body { padding: 0 0 72px; background: var(--paper); }
+.ch-trial-started { display: flex; flex-direction: column; gap: 4px; margin-bottom: 20px; padding: 16px 20px; border-radius: 10px; background: var(--teal-surface); color: var(--teal-dark); font-size: 14px; }
+.ch-primary { border: 1px solid var(--line); border-radius: 14px; background: #fff; overflow: hidden; }
+.ch-platform { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 24px; padding: 28px; }
+.ch-platform + .ch-platform { border-top: 1px solid var(--line); }
+.ch-platform-heading { display: flex; align-items: center; gap: 16px; }
+.ch-icon { display: grid; flex-shrink: 0; width: 44px; height: 44px; place-items: center; color: var(--teal); }
+.ch-platform h2 { margin: 0; font-size: 24px; font-weight: 750; letter-spacing: -.02em; }
+.ch-platform-heading p { margin: 4px 0 0; color: var(--ink-soft); font-size: 14px; line-height: 1.5; }
+.ch-beta { margin-left: 6px; color: var(--ink-soft); font-size: 13px; font-weight: 500; letter-spacing: normal; }
+.ch-download { display: inline-flex; align-items: center; justify-content: center; align-self: center; gap: 9px; min-height: 48px; padding: 12px 20px; border-radius: 9px; background: var(--teal); color: #fff; font-size: 15px; font-weight: 700; text-decoration: none; }
+.ch-download:hover { background: var(--teal-dark); }
+.ch-download:focus-visible, .ch-help:focus-visible, .ch-mobile summary:focus-visible { outline: 3px solid var(--amber); outline-offset: 4px; }
+.ch-setup { grid-column: 1 / -1; margin: 4px 0 0 60px; max-width: 650px; color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+.ch-help { grid-column: 1 / -1; justify-self: start; margin-left: 60px; color: var(--teal); font-size: 14px; text-underline-offset: 3px; }
+.ch-dashboard-link { display: inline-block; margin-top: 20px; color: var(--teal); font-size: 14px; font-weight: 700; }
+.ch-mobile { margin-top: 28px; color: var(--ink-soft); font-size: 14px; }
+.ch-mobile summary { cursor: pointer; width: fit-content; padding: 8px 0; }
+.ch-mobile p { margin: 8px 0 12px; line-height: 1.6; }
+.ch-mobile > div { display: flex; gap: 24px; }
+.ch-mobile a { color: var(--teal); text-underline-offset: 3px; }
 @media (max-width: 640px) {
-  .ch-hero { padding: 56px 0 44px; }
-  .ch-hero h1 { font-size: 38px; }
-  .ch-hero .inst-wrap > p:last-child { font-size: 17px; }
-  .inst-body { padding-bottom: 72px; }
-  .ch-trial-started { flex-direction: column; gap: 3px; }
-  .ch-tile { grid-template-columns: 44px 1fr; grid-template-areas:
-    "icon badge" "icon title" "copy copy" "cta cta"; padding: 20px; }
-  .ch-icon { width: 44px; height: 44px; }
-  .ch-tile p { margin-top: 14px; }
-  .ch-cta { justify-self: stretch; justify-content: center; margin-top: 16px; }
-  .ch-private { margin-top: 56px; padding-top: 30px; }
-  .ch-private .ch-tile { grid-template-areas: "icon title" "copy copy" "cta cta"; }
-  .ch-private .ch-tile p { margin-top: 10px; }
-  .ch-private .ch-cta { justify-self: start; margin-top: 10px; }
+  .ch-hero { padding-top: 40px; }
+  .ch-hero p { font-size: 17px; }
+  .ch-platform { grid-template-columns: minmax(0, 1fr); padding: 22px 20px; gap: 14px; }
+  .ch-download { width: 100%; }
+  .ch-setup, .ch-help { margin-left: 0; }
 }
 `;
