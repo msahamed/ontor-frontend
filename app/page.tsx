@@ -41,9 +41,9 @@ export default function Home() {
               Ontor notices changes in your voice, like stress or fatigue signals, suggests a short reset, and lets you compare your signals afterward.
             </p>
             <div className={styles.actions}>
-              <Link className={styles.primaryButton} href={START_FREE}>Try Ontor free</Link>
+              <Link className={styles.primaryButton} href="/install">Try Ontor free</Link>
             </div>
-            <p className={styles.trialNote}>14 days free. No card required.</p>
+            <p className={styles.trialNote}>Download for Mac or Windows. 14 days free. No card required.</p>
           </div>
           <ProductLoop />
         </section>
