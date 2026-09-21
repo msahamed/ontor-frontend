@@ -8,6 +8,9 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
+  openGraph: {
+    url: "https://ontor.ai/",
+  },
 };
 
 const START_FREE = "/install";

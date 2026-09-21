@@ -7,6 +7,12 @@ import styles from "../marketing-pages.module.css";
 export const metadata: Metadata = {
   title: "How Ontor works",
   description: "See how Ontor reads changes in your voice, compares them with your usual range, and suggests a reset when a shift lasts.",
+  alternates: { canonical: "/how-it-works/" },
+  openGraph: {
+    title: "How Ontor works",
+    description: "See how Ontor reads changes in your voice, compares them with your usual range, and suggests a reset when a shift lasts.",
+    url: "https://ontor.ai/how-it-works/",
+  },
 };
 
 const markers = [

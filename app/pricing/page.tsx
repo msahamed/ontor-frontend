@@ -7,6 +7,12 @@ import styles from "./pricing.module.css";
 export const metadata: Metadata = {
   title: "Pricing — Ontor",
   description: "Try Ontor free for 14 days, no card required. Then choose $20 a month or $168 a year.",
+  alternates: { canonical: "/pricing/" },
+  openGraph: {
+    title: "Pricing — Ontor",
+    description: "Try Ontor free for 14 days, no card required. Then choose $20 a month or $168 a year.",
+    url: "https://ontor.ai/pricing/",
+  },
 };
 
 const features = [

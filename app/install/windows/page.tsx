@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/install/windows/" },
   title: "Install Ontor for Windows",
   description: "Download the Ontor desktop beta for Windows.",
+  openGraph: {
+    title: "Install Ontor for Windows",
+    description: "Download the Ontor desktop beta for Windows.",
+    url: "https://ontor.ai/install/windows/",
+  },
 };
 
 export default async function InstallWindowsPage({

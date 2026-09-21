@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   title: "Install Ontor for Mac",
   description:
     "Download Ontor for Mac. One .dmg, drag it into Applications, and you're set. Notarized by Apple, updates itself.",
+  openGraph: {
+    title: "Install Ontor for Mac",
+    description:
+      "Download Ontor for Mac. One .dmg, drag it into Applications, and you're set. Notarized by Apple, updates itself.",
+    url: "https://ontor.ai/install/mac/",
+  },
 };
 
 export default async function InstallMacPage({

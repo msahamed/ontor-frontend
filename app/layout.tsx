@@ -54,7 +54,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Ontor — Performance intelligence from your voice",
     description: DESCRIPTION,
-    url: "https://ontor.ai",
+    // Do not set url here — it inherits to every page and makes Google
+    // select the homepage as canonical (install funnel SEO). Set per-page.
     siteName: "Ontor",
     type: "website",
     images: [

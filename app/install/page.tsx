@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/install/" },
   title: "Install Ontor",
   description: "Download Ontor for Mac or Windows. Try it free for 14 days, with no card required.",
+  openGraph: {
+    title: "Install Ontor",
+    description: "Download Ontor for Mac or Windows. Try it free for 14 days, with no card required.",
+    url: "https://ontor.ai/install/",
+  },
 };
 
 export default async function InstallChooserPage({
