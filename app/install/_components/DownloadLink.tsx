@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { trackWebsiteEvent } from "@/lib/website-analytics";
+import { trackWebsiteFunnelEvent } from "@/lib/website-analytics";
 
 type Props = {
   href: string;
@@ -23,12 +23,13 @@ export default function DownloadLink({
       className={className}
       href={href}
       onClick={() =>
-        trackWebsiteEvent("installer_download", {
+        trackWebsiteFunnelEvent("installer_download", {
           platform,
-          file_name: fileName,
-          page_path: window.location.pathname,
-          link_url: href,
-          transport_type: "beacon",
+          props: {
+            file_name: fileName,
+            link_url: href,
+            transport_type: "beacon",
+          },
         })
       }
     >
@@ -36,4 +37,3 @@ export default function DownloadLink({
     </a>
   );
 }
-

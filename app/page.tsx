@@ -5,6 +5,7 @@ import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import ProductLoop from "./components/landing/ProductLoop";
 import HeroDownloadButtons from "./components/landing/HeroDownloadButtons";
+import WebsitePageView from "./components/landing/WebsitePageView";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -39,6 +40,7 @@ export default function Home() {
   return (
     <>
       <Nav />
+      <WebsitePageView pageName="landing" />
       <main id="top">
         <section className={styles.hero}>
           <div className={styles.heroCopy}>

@@ -5,6 +5,7 @@ import { getSessionFromCookies } from "@/lib/auth";
 import { extractEmail, withEmail, type SearchParams } from "./_lib/query";
 import { INSTALL_SHARED_CSS } from "./_lib/shared-css";
 import DownloadLink from "./_components/DownloadLink";
+import WebsitePageView from "../components/landing/WebsitePageView";
 import InstallFooter from "./_components/InstallFooter";
 import { LaptopIcon, DownloadIcon, WindowsIcon } from "./_components/icons";
 
@@ -33,6 +34,7 @@ export default async function InstallChooserPage({
   return (
     <>
       <Nav />
+      <WebsitePageView pageName="install" />
 
       <main id="top" className="flex-1">
         <section className="ch-hero">
