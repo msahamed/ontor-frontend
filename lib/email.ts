@@ -167,68 +167,12 @@ export async function sendOwnerNotification(
   }
 }
 
-export type OwnerLifecycleMilestone =
-  | "install_reached_signup"
-  | "onboarding_completed"
-  | "email_verified"
-  | "trial_started"
-  | "first_check_in";
-
-interface OwnerLifecycleNotification {
-  milestone: OwnerLifecycleMilestone;
-  email?: string | null;
-  platform?: string | null;
-  appVersion?: string | null;
-  userId?: string | null;
-  occurredAt?: Date | null;
-  trialEndsAt?: Date | null;
-  trialDays?: number | null;
-}
-
-const lifecycleLabels: Record<OwnerLifecycleMilestone, string> = {
-  install_reached_signup: "Install reached signup",
-  onboarding_completed: "Onboarding completed",
-  email_verified: "Email verified",
-  trial_started: "Trial started",
-  first_check_in: "First check-in completed",
-};
-
-/** Send one plain founder alert for a meaningful product milestone. */
-export async function sendOwnerLifecycleNotification(
-  notice: OwnerLifecycleNotification,
-): Promise<void> {
-  const client = getResend();
-  if (!client) {
-    console.warn("[email] RESEND_API_KEY missing — skipping lifecycle notification");
-    return;
-  }
-
-  const label = lifecycleLabels[notice.milestone];
-  const subjectDetail = notice.email ?? notice.platform ?? "Ontor";
-  const lines = [label, ""];
-  if (notice.email) lines.push(`Email: ${notice.email}`);
-  if (notice.platform) lines.push(`Platform: ${notice.platform}`);
-  if (notice.appVersion) lines.push(`Version: ${notice.appVersion}`);
-  if (notice.userId) lines.push(`User ID: ${notice.userId}`);
-  if (notice.occurredAt) lines.push(`Time: ${notice.occurredAt.toISOString()}`);
-  if (notice.trialDays) lines.push(`Trial: ${notice.trialDays} days`);
-  if (notice.trialEndsAt) {
-    lines.push(`Trial ends: ${notice.trialEndsAt.toISOString()}`);
-  }
-
-  try {
-    const { error } = await client.emails.send({
-      from: FROM,
-      to: OWNER_NOTIFY,
-      ...(notice.email ? { replyTo: notice.email } : {}),
-      subject: `${label}: ${subjectDetail}`,
-      text: lines.join("\n"),
-    });
-    if (error) console.error("[email] lifecycle notify failed:", error);
-  } catch (err) {
-    console.error("[email] lifecycle notify threw:", err);
-  }
-}
+// Founder lifecycle emails moved to lib/founder-alerts.ts
+// (notifyFounderStep). Re-export types for any older imports.
+export {
+  type FounderStep as OwnerLifecycleMilestone,
+  notifyFounderStep as sendOwnerLifecycleNotification,
+} from "@/lib/founder-alerts";
 
 // ── Sign-in code ──────────────────────────────────────────────────────
 //

@@ -17,7 +17,7 @@ import { NextResponse } from "next/server";
 import { after } from "next/server";
 import { accounts, getDb, requireSession } from "@/lib/auth";
 import { sendTrialStarted } from "@/lib/billing-email";
-import { sendClaimedOwnerMilestone } from "@/lib/owner-lifecycle";
+import { notifyFounderStep } from "@/lib/founder-alerts";
 import { entitlementForEmail, trialDays } from "@/lib/entitlement";
 
 export const runtime = "nodejs";
@@ -68,8 +68,7 @@ export async function POST(req: Request) {
     after(async () => {
       await Promise.all([
         sendTrialStarted(session.email, endsAt, trialDays()),
-        sendClaimedOwnerMilestone(db, {
-          milestone: "trial_started",
+        notifyFounderStep(db, "trial_started", {
           identityKey: session.userId,
           email: session.email,
           userId: session.userId,

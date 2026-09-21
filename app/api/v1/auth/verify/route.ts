@@ -45,7 +45,7 @@ import {
 import { consume } from "@/lib/rate-limit";
 import { linkCoachShares } from "@/lib/shares";
 import { entitlementForEmail } from "@/lib/entitlement";
-import { sendClaimedOwnerMilestone } from "@/lib/owner-lifecycle";
+import { notifyFounderStep } from "@/lib/founder-alerts";
 
 export const runtime = "nodejs";
 
@@ -215,8 +215,7 @@ export async function POST(req: Request) {
 
     if (becameVerified) {
       after(() =>
-        sendClaimedOwnerMilestone(db, {
-          milestone: "email_verified",
+        notifyFounderStep(db, "email_verified", {
           identityKey: userId,
           email,
           userId,

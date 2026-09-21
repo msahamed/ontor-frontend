@@ -12,7 +12,7 @@ import { NextResponse, after } from "next/server";
 import { getMongoClient } from "@/lib/mongodb";
 import { consume, clientIp } from "@/lib/rate-limit";
 import { sendWelcomeEmail, sendOwnerNotification } from "@/lib/email";
-import { sendClaimedOwnerMilestone } from "@/lib/owner-lifecycle";
+import { notifyFounderStep } from "@/lib/founder-alerts";
 
 export const runtime = "nodejs";
 
@@ -128,8 +128,7 @@ export async function POST(req: Request) {
     // signups still produce exactly one install alert.
     if (source === "mobile_app") {
       after(() =>
-        sendClaimedOwnerMilestone(db, {
-          milestone: "install_reached_signup",
+        notifyFounderStep(db, "install_reached_signup", {
           identityKey: userId ?? email,
           email,
           userId,

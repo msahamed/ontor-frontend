@@ -27,7 +27,11 @@ import { after, NextResponse } from "next/server";
 import type { Db } from "mongodb";
 import { getMongoClient } from "@/lib/mongodb";
 import { consume, clientIp } from "@/lib/rate-limit";
-import { sendClaimedOwnerMilestone } from "@/lib/owner-lifecycle";
+import {
+  notifyFounderStep,
+  founderContextFromWebsiteProps,
+  type FounderStep,
+} from "@/lib/founder-alerts";
 
 // Mongo Node driver needs the Node runtime (no edge support).
 export const runtime = "nodejs";
@@ -55,25 +59,55 @@ interface StoredEvent {
   event_datetime: Date;
   app_version: string | null;
   platform: string | null;
+  props?: Record<string, unknown>;
 }
 
 const OWNER_EVENT_MILESTONES = {
+  installer_download: "installer_download",
   onboarding_completed: "onboarding_completed",
   log_created: "first_check_in",
 } as const;
 
-async function notifyOwnerMilestones(db: Db, docs: StoredEvent[]) {
+async function notifyOwnerMilestones(
+  db: Db,
+  docs: StoredEvent[],
+  requestMeta: { ip?: string | null } = {},
+) {
   for (const doc of docs) {
-    const milestone =
+    const step =
       OWNER_EVENT_MILESTONES[
         doc.event as keyof typeof OWNER_EVENT_MILESTONES
-      ];
-    if (!milestone) continue;
+      ] as FounderStep | undefined;
+    if (!step) continue;
 
     try {
-      // Analytics uses the same canonical user id that signup/auth stores.
-      // Requiring that link prevents the open analytics endpoint from being
-      // turned into a founder-email spam relay.
+      const props = doc.props ?? {};
+      const propStr = (key: string) =>
+        typeof props[key] === "string" ? (props[key] as string) : null;
+
+      // Website download: no email yet. Still alert once per anonymous web
+      // user_id, but only for real website Mac/Windows installer clicks so
+      // the open analytics endpoint cannot become a spam relay.
+      if (step === "installer_download") {
+        const source = propStr("source");
+        const platform = doc.platform;
+        if (source !== "website") continue;
+        if (platform !== "macos" && platform !== "windows") continue;
+
+        await notifyFounderStep(db, step, {
+          identityKey: doc.user_id,
+          userId: doc.user_id,
+          platform,
+          appVersion: doc.app_version,
+          occurredAt: doc.event_datetime,
+          ip: requestMeta.ip ?? null,
+          ...founderContextFromWebsiteProps(props),
+        });
+        continue;
+      }
+
+      // Later milestones require a linked inbox. That keeps the open
+      // analytics endpoint from being turned into a founder-email spam relay.
       const [account, signup] = await Promise.all([
         db.collection("accounts").findOne(
           { user_id: doc.user_id },
@@ -92,14 +126,14 @@ async function notifyOwnerMilestones(db: Db, docs: StoredEvent[]) {
             : null;
       if (!email) continue;
 
-      await sendClaimedOwnerMilestone(db, {
-        milestone,
+      await notifyFounderStep(db, step, {
         identityKey: doc.user_id,
         email,
         userId: doc.user_id,
         platform: doc.platform,
         appVersion: doc.app_version,
         occurredAt: doc.event_datetime,
+        ip: requestMeta.ip ?? null,
       });
     } catch (err) {
       // Analytics acceptance is more important than a founder alert. A mail
@@ -175,7 +209,8 @@ export async function POST(req: Request) {
   // Open ingest, so cap it per host. Deliberately generous: real
   // devices drain a queue in bursts, and several can share one NAT
   // address, so this is a bloat backstop rather than a tight quota.
-  const rl = await consume(`events:ip:${clientIp(req)}`, 600, 3600);
+  const requestIp = clientIp(req);
+  const rl = await consume(`events:ip:${requestIp}`, 600, 3600);
   if (!rl.ok) {
     return NextResponse.json({ error: "too_many_requests" }, { status: 429 });
   }
@@ -252,6 +287,6 @@ export async function POST(req: Request) {
     }
   }
 
-  after(() => notifyOwnerMilestones(db, docs));
+  after(() => notifyOwnerMilestones(db, docs, { ip: requestIp }));
   return NextResponse.json(result);
 }
