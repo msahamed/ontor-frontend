@@ -53,9 +53,6 @@ export default function Home() {
             <HeroDownloadButtons />
           </div>
           <ProductLoop />
-          <div className={styles.demoCta}>
-            <HeroDownloadButtons />
-          </div>
         </section>
 
         <section className={styles.liveSection} id="how">
