@@ -13,6 +13,14 @@
 .actions{display:flex;align-items:center;gap:24px;margin-top:30px}
 .primaryButton{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:12px;background:var(--teal);color:#fff;font-size:15px;font-weight:700;text-decoration:none;box-shadow:0 6px 18px rgba(15,118,110,.2);transition:background .2s,transform .2s}
 .primaryButton:hover{background:var(--teal-dark);transform:translateY(-1px)}
+.secondaryButton{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid var(--line-strong);color:var(--teal);background:transparent;font-size:15px;font-weight:700;text-decoration:none;transition:background .2s,transform .2s,border-color .2s}
+.secondaryButton:hover{border-color:var(--teal);background:var(--teal-surface);transform:translateY(-1px)}
+.secondaryButton:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.downloadCta{margin-top:24px}
+.downloadCta .actions{margin-top:0;gap:12px;flex-wrap:wrap}
+.installOptionsNote{margin:10px 0 0;font-size:14px}
+.installOptionsNote a{color:var(--teal);text-decoration:underline;text-underline-offset:3px}
+.installOptionsNote a:hover{color:var(--teal-dark)}
 .trialNote{margin:11px 0 0;color:var(--ink-soft);font-size:13px}
 .liveSection{padding-bottom:84px}
 .sectionCopy{max-width:650px;margin-bottom:32px}

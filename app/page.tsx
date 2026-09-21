@@ -4,6 +4,7 @@ import Link from "next/link";
 import Nav from "./components/Nav";
 import Footer from "./components/Footer";
 import ProductLoop from "./components/landing/ProductLoop";
+import HeroDownloadButtons from "./components/landing/HeroDownloadButtons";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,6 @@ export const metadata: Metadata = {
   },
 };
 
-const START_FREE = "/install";
 
 const liveSignals = [
   ["Energy", "In range", 48, false],
@@ -48,15 +48,11 @@ export default function Home() {
               <strong>Stay sharp for the conversations that matter.</strong>{" "}
               Ontor notices changes in your voice, like stress or fatigue signals, suggests a short reset, and lets you compare your signals afterward.
             </p>
-            <div className={styles.actions}>
-              <Link className={styles.primaryButton} href="/install">Try Ontor free</Link>
-            </div>
-            <p className={styles.trialNote}>Download for Mac or Windows. 14 days free. No card required.</p>
+            <HeroDownloadButtons />
           </div>
           <ProductLoop />
           <div className={styles.demoCta}>
-            <Link className={styles.primaryButton} href="/install">Try Ontor free</Link>
-            <p className={styles.trialNote}>Download for Mac or Windows. 14 days free. No card required.</p>
+            <HeroDownloadButtons />
           </div>
         </section>
 
@@ -206,8 +202,7 @@ export default function Home() {
 
         <section className={styles.finalCta} id="start">
           <h2>See how Ontor can help you stay sharp.</h2>
-          <Link className={styles.primaryButton} href={START_FREE}>See what your voice shows</Link>
-          <p className={styles.trialNote}>14 days free. No card required. Cancel anytime.</p>
+          <HeroDownloadButtons />
         </section>
       </main>
 
