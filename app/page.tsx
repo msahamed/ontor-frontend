@@ -45,10 +45,10 @@ export default function Home() {
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <p className={styles.heroContext}>In your desktop menu bar</p>
-            <h1>See what your voice shows.</h1>
+            <h1>See how your voice changes during important calls.</h1>
             <p className={styles.lede}>
               <strong>Stay sharp for the conversations that matter.</strong>{" "}
-              Ontor notices changes in your voice, like stress or fatigue signals, suggests a short reset, and lets you compare your signals afterward.
+              Ontor learns what&rsquo;s usual for your voice, shows when that changes, and offers a brief cue during a call or a reset afterward.
             </p>
             <HeroDownloadButtons />
           </div>
