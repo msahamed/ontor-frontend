@@ -72,10 +72,10 @@ export default async function InstallChooserPage({
                   <span className="ch-icon" aria-hidden="true"><WindowsIcon /></span>
                   <div><h2>Windows <span className="ch-beta">Beta</span></h2><p>64-bit Windows 10 or later</p></div>
                 </div>
-                <DownloadLink className="ch-download" href="https://ontor.ai/downloads/windows/Ontor-Setup.exe" platform="windows" fileName="Ontor-Setup.exe">
+                <DownloadLink className="ch-download" href="https://ontor.ai/downloads/windows/Ontor.exe" platform="windows" fileName="Ontor.exe">
                   <DownloadIcon /> Download for Windows
                 </DownloadLink>
-                <p className="ch-setup">Open the .exe to install. This beta is unsigned, so Windows may show a SmartScreen prompt.</p>
+                <p className="ch-setup">Open the .exe to install. Ontor is digitally signed. Windows may show a SmartScreen check while this new publisher builds reputation.</p>
                 <Link className="ch-help" href={link("/install/windows")}>Windows setup instructions</Link>
               </article>
             </div>

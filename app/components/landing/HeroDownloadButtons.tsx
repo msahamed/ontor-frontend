@@ -6,7 +6,7 @@ import DownloadLink from "@/app/install/_components/DownloadLink";
 import styles from "../../page.module.css";
 
 const MAC_DMG_URL = "https://ontor.ai/downloads/mac/Ontor.dmg";
-const WINDOWS_EXE_URL = "https://ontor.ai/downloads/windows/Ontor-Setup.exe";
+const WINDOWS_EXE_URL = "https://ontor.ai/downloads/windows/Ontor.exe";
 
 type Platform = "macos" | "windows" | "other";
 
@@ -47,7 +47,7 @@ export default function HeroDownloadButtons() {
       className={windowsPrimary ? styles.primaryButton : styles.secondaryButton}
       href={WINDOWS_EXE_URL}
       platform="windows"
-      fileName="Ontor-Setup.exe"
+      fileName="Ontor.exe"
     >
       Download for Windows
     </DownloadLink>

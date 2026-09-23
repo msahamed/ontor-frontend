@@ -8,7 +8,7 @@ import { INSTALL_SHARED_CSS } from "../_lib/shared-css";
 import { extractEmail, type SearchParams } from "../_lib/query";
 
 const WINDOWS_INSTALLER_URL =
-  "https://ontor.ai/downloads/windows/Ontor-Setup.exe";
+  "https://ontor.ai/downloads/windows/Ontor.exe";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/install/windows/" },
@@ -46,18 +46,18 @@ export default async function InstallWindowsPage({
             className="wn-dl-btn"
             href={WINDOWS_INSTALLER_URL}
             platform="windows"
-            fileName="Ontor-Setup.exe"
+            fileName="Ontor.exe"
           >
             <DownloadIcon /> Download Ontor for Windows
           </DownloadLink>
-          <span className="wn-dl-meta">Ontor-Setup.exe &middot; unsigned beta</span>
+          <span className="wn-dl-meta">Ontor.exe &middot; signed for Windows</span>
         </div>
 
         <div className="inst-wrap">
           <div className="wn-steps">
             <div className="wn-step">
               <span className="wn-step-n">Step 1</span>
-              <p><strong>Open Ontor-Setup.exe.</strong> Find it in Downloads and double-click it.</p>
+              <p><strong>Open Ontor.exe.</strong> Find it in Downloads and double-click it.</p>
             </div>
             <div className="wn-step">
               <span className="wn-step-n">Step 2</span>
