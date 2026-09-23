@@ -61,11 +61,11 @@ export default async function InstallWindowsPage({
             </div>
             <div className="wn-step">
               <span className="wn-step-n">Step 2</span>
-              <p><strong>If SmartScreen appears, choose More info.</strong> Then select Run anyway. This beta is not digitally signed yet.</p>
+              <p><strong>If SmartScreen appears, choose More info.</strong> Confirm the publisher is Ontor, then select Run anyway. Windows may show this check while the new publisher builds reputation.</p>
             </div>
             <div className="wn-step">
               <span className="wn-step-n">Step 3</span>
-              <p><strong>Finish installation.</strong> Ontor opens and remains available from the system tray.</p>
+              <p><strong>Finish installation.</strong> Ontor opens and remains visible in the taskbar and system tray.</p>
             </div>
           </div>
           <div className="wn-req">Requires 64-bit Windows 10 or later.</div>
