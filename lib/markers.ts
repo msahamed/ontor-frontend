@@ -58,13 +58,32 @@ export const statSd = (a: number[]) => {
   return Math.sqrt(a.reduce((s, v) => s + (v - m) ** 2, 0) / (a.length - 1));
 };
 
-export interface Triage {
-  key: MarkerKey; name: string; recent: number; usual: number;
-  delta: number; swing: number; level: 0 | 1 | 2; bad: boolean; spark: number[];
+export type UsualBand = { median: number; low: number; high: number };
+
+/** Personal p10–p90 range, with the same 10-point half-width floor as the app. */
+export function usualBand(values: number[], minSamples = 15): UsualBand | null {
+  const sorted = values.filter(Number.isFinite).map((v) => Math.max(0, Math.min(100, v))).sort((a, b) => a - b);
+  if (sorted.length < minSamples) return null;
+  const percentile = (p: number) => {
+    const rank = (sorted.length - 1) * p / 100;
+    const lower = Math.floor(rank);
+    const upper = Math.min(lower + 1, sorted.length - 1);
+    return sorted[lower]! + (sorted[upper]! - sorted[lower]!) * (rank - lower);
+  };
+  const median = percentile(50);
+  return {
+    median,
+    low: median - Math.max(median - percentile(10), 10),
+    high: median + Math.max(percentile(90) - median, 10),
+  };
 }
 
-/** Recent against usual, judged against the client's own swing, so a
- *  move smaller than their normal wobble reads as noise not news. */
+export interface Triage {
+  key: MarkerKey; name: string; recent: number; usual: number;
+  delta: number; low: number; high: number; level: 0 | 2; bad: boolean; spark: number[];
+}
+
+/** Recent daily readings against the earlier days' personal p10–p90 range. */
 export function triage(days: DayRow[], windowDays = 7): Triage[] {
   if (days.length < 3) return [];
   const lastOrd = Date.parse(days[days.length - 1]!.day);
@@ -77,36 +96,38 @@ export function triage(days: DayRow[], windowDays = 7): Triage[] {
     const rv = recentD.map((d) => d.m[key]).filter((v): v is number => v != null);
     const bv = baseD.map((d) => d.m[key]).filter((v): v is number => v != null);
     if (!rv.length || bv.length < 2) return [];
-    const recent = statMean(rv), usual = statMean(bv), swing = statSd(bv);
+    const band = usualBand(bv);
+    if (!band) return [];
+    const recent = statMean(rv), usual = band.median;
     const delta = recent - usual;
     return [{
       key,
       name: MARKER_LABEL[key],
-      recent, usual, delta, swing,
-      level: (swing > 0 && Math.abs(delta) > swing ? 2 : swing > 0 && Math.abs(delta) > 0.6 * swing ? 1 : 0) as 0 | 1 | 2,
-      bad: HIGH_IS_BAD[key] ? delta > 0 : delta < 0,
+      recent, usual, delta, low: band.low, high: band.high,
+      level: recent < band.low || recent > band.high ? 2 : 0,
+      bad: HIGH_IS_BAD[key] ? recent > band.high : recent < band.low,
       spark: days.slice(-14).map((d) => d.m[key]).filter((v): v is number => v != null),
     }];
   });
 }
 
 export interface Zone {
-  key: MarkerKey; name: string; baseline: number; swing: number;
+  key: MarkerKey; name: string; baseline: number | null; low: number | null; high: number | null;
   points: { day: string; v: number; out: boolean; bad: boolean }[];
 }
 
 /** Daily dots plus the client's usual band, for one dial. */
 export function zoneFor(days: DayRow[], key: MarkerKey, windowDays: number): Zone {
   const all = days.map((d) => d.m[key]).filter((v): v is number => v != null);
-  const baseline = all.length ? statMean(all) : 0;
-  const swing = statSd(all);
+  const band = usualBand(all);
   const cut = days.length ? Date.parse(days[days.length - 1]!.day) - (windowDays - 1) * 864e5 : 0;
 
   return {
     key,
     name: MARKER_LABEL[key],
-    baseline,
-    swing,
+    baseline: band?.median ?? null,
+    low: band?.low ?? null,
+    high: band?.high ?? null,
     points: days
       .filter((d) => Date.parse(d.day) >= cut && d.m[key] != null)
       .map((d) => {
@@ -114,8 +135,8 @@ export function zoneFor(days: DayRow[], key: MarkerKey, windowDays: number): Zon
         return {
           day: d.day,
           v,
-          out: swing > 0 && Math.abs(v - baseline) > swing,
-          bad: HIGH_IS_BAD[key] ? v > baseline : v < baseline,
+          out: band != null && (v < band.low || v > band.high),
+          bad: band != null && (HIGH_IS_BAD[key] ? v > band.high : v < band.low),
         };
       }),
   };

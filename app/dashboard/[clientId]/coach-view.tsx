@@ -22,8 +22,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  statMean,
-  statSd,
+  usualBand,
   triage as computeTriage,
   type DayRow,
   type MarkerKey,
@@ -37,22 +36,18 @@ const LINE = "#F1ECE2";
 const TEAL = "#0F766E";
 const TEAL_DEEP = "#0B5048";
 const TEAL_TINT = "#E8F1EF";
-const ZONE_FILL = "#E1EFEA";
 const CLAY = "#B7492F";
-const AMBER_TINT = "#FBEFD3";
-const AMBER_INK = "#8A5A0B";
-const AMBER_LINE = "#FCD34D";
 const CARD_LINE = "#E4DDD0";
 const CONNECT = "#C9C2B2";
 const DOT_PLAIN = "#A9A290";
 const SELF_FILL = "#F7F4EE";
 
-/** The four dials the design triages, with its colours. */
-const DIALS: { key: MarkerKey; name: string; c: string }[] = [
-  { key: "stress", name: "Stress", c: CLAY },
-  { key: "confidence", name: "Confidence", c: TEAL },
-  { key: "energy", name: "Energy", c: "#F59E0B" },
-  { key: "fatigue", name: "Fatigue", c: MUTED },
+/** The four dials summarized at the top. */
+const DIALS: { key: MarkerKey; name: string }[] = [
+  { key: "stress", name: "Stress" },
+  { key: "confidence", name: "Confidence" },
+  { key: "energy", name: "Energy" },
+  { key: "fatigue", name: "Fatigue" },
 ];
 
 /** The five dials the zone chart offers. */
@@ -123,7 +118,7 @@ export default function CoachView({
 
   const cards = DIALS.flatMap((d) => {
     const t = tri.find((x) => x.key === d.key);
-    return t ? [{ ...t, c: d.c }] : [];
+    return t ? [t] : [];
   });
 
   return (
@@ -134,10 +129,10 @@ export default function CoachView({
           {cards.map((t) => {
             const d = Math.round(Math.abs(t.delta));
             const good = HI_BAD[t.key] ? t.delta < 0 : t.delta > 0;
-            const badge = t.level === 2 ? (good ? "Improving" : "Worth a look") : t.level === 1 ? "Drifting" : "Steady";
-            const badgeBg = t.level === 2 ? (good ? TEAL_TINT : AMBER_TINT) : t.level === 1 ? LINE : TEAL_TINT;
-            const badgeColor = t.level === 2 ? (good ? TEAL_DEEP : AMBER_INK) : t.level === 1 ? "#5A554B" : TEAL_DEEP;
-            const border = t.level === 2 ? (good ? TEAL : AMBER_LINE) : CARD_LINE;
+            const badge = t.level === 2 ? (good ? "Better than usual" : "Worth a look") : "Within usual range";
+            const badgeBg = t.level === 2 ? (good ? TEAL_TINT : "#F8EBE7") : LINE;
+            const badgeColor = t.level === 2 ? (good ? TEAL_DEEP : CLAY) : MUTED;
+            const border = t.level === 2 ? (good ? TEAL : CLAY) : CARD_LINE;
             return (
               <div className="dial" key={t.key} style={{ borderColor: border }}>
                 <div className="dialtop">
@@ -151,7 +146,7 @@ export default function CoachView({
                       {t.delta >= 0 ? "+" : "−"}{d} vs usual {Math.round(t.usual)}
                     </div>
                   </div>
-                  <Spark points={sparkPoints(days, t.key, 10)} w={92} h={30} color={t.c} />
+                  <Spark points={sparkPoints(days, t.key, 10)} w={92} h={30} color={t.level === 2 ? (good ? TEAL : CLAY) : DOT_PLAIN} />
                 </div>
               </div>
             );
@@ -169,10 +164,9 @@ export default function CoachView({
           </div>
         </div>
         <p className="sub">
-          Each dot is one day&apos;s average. The green band is {perspective === "self" ? "your" : "their"} usual zone for that dial, one
-          standard swing either side of {perspective === "self" ? "your" : "their"} baseline across the whole run. A dot outside the
-          zone is labeled with its day: red means it moved the wrong way for that dial, teal means
-          better than usual. Dashed stretches are days with no check-ins. Hover any dot for detail.
+          Each dot is one day&apos;s average. The shaded band is {perspective === "self" ? "your" : "their"} usual range
+          (p10–p90) across daily readings. Gray is within that range; teal is better than usual and reddish is concerning.
+          Dashed stretches are days with no check-ins. Hover any dot for detail.
         </p>
         <div className="chips">
           {ZONES.map((z) => (
@@ -181,7 +175,7 @@ export default function CoachView({
           ))}
         </div>
         <div className="card">
-          <ZoneChart days={days} zoneKey={zoneKey} range={range} perspective={perspective} />
+          <ZoneChart days={days} zoneKey={zoneKey} range={range} />
         </div>
       </section>
 
@@ -400,7 +394,7 @@ function Spark({ points, w, h, color }: { points: { d: string; v: number }[]; w:
   );
 }
 
-function ZoneChart({ days, zoneKey, range, perspective }: { days: DayRow[]; zoneKey: MarkerKey; range: Range; perspective: Perspective }) {
+function ZoneChart({ days, zoneKey, range }: { days: DayRow[]; zoneKey: MarkerKey; range: Range }) {
   const W = 1040, H = 300, R = 96, L = 36, T = 14, B = 32;
   const withVal = days.filter((d) => d.m[zoneKey] != null);
   if (!withVal.length) return <p className="note">No readings for this dial yet.</p>;
@@ -410,15 +404,15 @@ function ZoneChart({ days, zoneKey, range, perspective }: { days: DayRow[]; zone
   if (shownDays.length < 2) return <p className="note">Not enough days in this range.</p>;
 
   const allVals = withVal.map((d) => d.m[zoneKey]!);
-  const base = statMean(allVals);
-  const sd = statSd(allVals);
+  const band = usualBand(allVals);
+  const base = band?.median ?? 50;
   const shown = shownDays.map((d) => ({ d: d.day, v: d.m[zoneKey]!, n: d.n }));
 
   const O0 = ord(shown[0]!.d), O1 = ord(shown[shown.length - 1]!.d);
   const span = Math.max(1, O1 - O0);
   const x = (d: string) => L + ((ord(d) - O0) / span) * (W - L - R);
-  const lo0 = Math.min(base - sd, ...shown.map((p) => p.v));
-  const hi0 = Math.max(base + sd, ...shown.map((p) => p.v));
+  const lo0 = Math.min(...(band ? [band.low] : []), ...shown.map((p) => p.v));
+  const hi0 = Math.max(...(band ? [band.high] : []), ...shown.map((p) => p.v));
   const ymin = Math.max(0, Math.floor((lo0 - 8) / 10) * 10);
   const ymax = Math.min(100, Math.ceil((hi0 + 8) / 10) * 10);
   const step = ymax - ymin > 45 ? 20 : 10;
@@ -435,7 +429,7 @@ function ZoneChart({ days, zoneKey, range, perspective }: { days: DayRow[]; zone
 
   const labels: React.ReactNode[] = [];
   const dots = shown.map((p, i) => {
-    const outHi = p.v > base + sd, outLo = p.v < base - sd, out = outHi || outLo;
+    const outHi = band != null && p.v > band.high, outLo = band != null && p.v < band.low, out = outHi || outLo;
     const bad = outHi ? hiBad : outLo ? !hiBad : false;
     const dotCol = out ? (bad ? CLAY : TEAL) : DOT_PLAIN;
     if (out) {
@@ -461,25 +455,27 @@ function ZoneChart({ days, zoneKey, range, perspective }: { days: DayRow[]; zone
     );
   });
 
-  const zlY = y(base + sd) + 16;
+  const zlY = band ? y(band.high) + 16 : 0;
   const zlLeftFree = free(L + 50, zlY);
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ display: "block", width: "100%", height: "auto" }} role="img"
-      aria-label={`Daily averages against a usual zone of ${Math.round(base - sd)} to ${Math.round(base + sd)}.`}>
+      aria-label={band ? `Daily averages against a usual range of ${Math.round(band.low)} to ${Math.round(band.high)}.` : "Daily averages; usual range is still building."}>
       {grid.map((g) => (
         <g key={`g${g}`}>
           <line x1={L} x2={W - R} y1={y(g)} y2={y(g)} stroke={LINE} />
           <text x={L - 7} y={y(g) + 4} textAnchor="end" fontSize="12" fill={MUTED}>{g}</text>
         </g>
       ))}
-      <rect x={L} y={y(base + sd)} width={W - L - R} height={y(base - sd) - y(base + sd)} fill={ZONE_FILL}>
-        <title>{`Usual zone: ${Math.round(base - sd)} to ${Math.round(base + sd)}, one standard swing either side of ${perspective === "self" ? "your" : "this person's"} baseline across the whole run.`}</title>
-      </rect>
-      <line x1={L} x2={W - R} y1={y(base)} y2={y(base)} stroke={TEAL} strokeWidth="1.5" strokeDasharray="6 5" />
-      <text x={W - R + 8} y={y(base) + 4} fontSize="12.5" fontWeight="700" fill={TEAL_DEEP}>
-        {`usual ${Math.round(base)}`}
-      </text>
+      {band && <>
+        <rect x={L} y={y(band.high)} width={W - L - R} height={y(band.low) - y(band.high)} fill={LINE}>
+          <title>{`Usual range: ${Math.round(band.low)} to ${Math.round(band.high)}, personal p10–p90 of daily readings.`}</title>
+        </rect>
+        <line x1={L} x2={W - R} y1={y(base)} y2={y(base)} stroke={MUTED} strokeWidth="1.5" strokeDasharray="6 5" />
+        <text x={W - R + 8} y={y(base) + 4} fontSize="12.5" fontWeight="700" fill={MUTED}>
+          {`usual ${Math.round(base)}`}
+        </text>
+      </>}
       {shown.slice(1).map((p, k) => {
         const i = k + 1;
         const consec = ord(p.d) - ord(shown[i - 1]!.d) === 1;
@@ -498,10 +494,10 @@ function ZoneChart({ days, zoneKey, range, perspective }: { days: DayRow[]; zone
           </text>
         ) : null,
       )}
-      <text x={zlLeftFree ? L + 8 : W - R - 8} y={zlY} textAnchor={zlLeftFree ? "start" : "end"}
-        fontSize="11.5" fill={TEAL_DEEP}>
-        {`zone ${Math.round(base - sd)} to ${Math.round(base + sd)}`}
-      </text>
+      {band && <text x={zlLeftFree ? L + 8 : W - R - 8} y={zlY} textAnchor={zlLeftFree ? "start" : "end"}
+        fontSize="11.5" fill={MUTED}>
+        {`zone ${Math.round(band.low)} to ${Math.round(band.high)}`}
+      </text>}
     </svg>
   );
 }
