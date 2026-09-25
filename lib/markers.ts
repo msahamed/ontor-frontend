@@ -6,19 +6,19 @@
 
 export const MARKER_KEYS = [
   "stress", "confidence", "energy", "fatigue",
-  "vocal_strain", "articulation", "breathing",
+  "vocal_strain", "articulation", "hesitation",
 ] as const;
 export type MarkerKey = (typeof MARKER_KEYS)[number];
 
 export const MARKER_LABEL: Record<MarkerKey, string> = {
   stress: "Stress", confidence: "Confidence", energy: "Energy", fatigue: "Fatigue",
-  vocal_strain: "Vocal strain", articulation: "Articulation", breathing: "Breathing",
+  vocal_strain: "Vocal strain", articulation: "Articulation", hesitation: "Hesitation",
 };
 
 /** Is a HIGH reading the unhelpful direction for this dial? */
 export const HIGH_IS_BAD: Record<MarkerKey, boolean> = {
   stress: true, fatigue: true, vocal_strain: true,
-  confidence: false, energy: false, articulation: false, breathing: false,
+  confidence: false, energy: false, articulation: false, hesitation: true,
 };
 
 /** Pairs built from overlapping inputs, so part of any agreement is by
@@ -153,7 +153,7 @@ export const SERIES: Record<string, string> = {
   confidence: "#0E9280",
   energy: "#8A5FC7",
   fatigue: "#8F6D14",
-  breathing: "#2F79C4",
+  hesitation: "#2F79C4",
   vocal_strain: "#B5478E",
   articulation: "#4E8F3F",
 };

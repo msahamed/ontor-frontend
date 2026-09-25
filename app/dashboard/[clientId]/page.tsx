@@ -11,6 +11,7 @@ import { getSessionFromCookies } from "@/lib/auth";
 import { getClientDetail } from "@/lib/dashboard";
 import { getDayMeans } from "@/lib/coach-analytics";
 import CoachView from "./coach-view";
+import { getLatestActivity } from "@/lib/today-analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +49,7 @@ export default async function ClientPage({
   if (!client) redirect("/dashboard");
 
   const dayRows = await getDayMeans(clientId, 90);
+  const activity = await getLatestActivity(clientId);
 
   const isSelf = client.userId === session.userId;
 
@@ -60,16 +62,7 @@ export default async function ClientPage({
         {isSelf ? "Your overview" : "Team members"}
       </Link>
 
-      <div className="topbar">
-        <div>
-          <h1>{isSelf ? "You" : client.name}</h1>
-          <p className="sub">
-            {client.count30} check-ins in the last 30 days. Last one {ago(client.lastAt)}.
-          </p>
-        </div>
-      </div>
-
-      <CoachView days={dayRows} clientId={client.userId} perspective={isSelf ? "self" : "member"} />
+      <CoachView days={dayRows} clientId={client.userId} perspective={isSelf ? "self" : "member"} title={isSelf ? "You" : client.name} summary={`${client.count30} check-ins in the last 30 days. Last one ${ago(client.lastAt)}.`} latestActivity={activity} />
 
     </>
   );

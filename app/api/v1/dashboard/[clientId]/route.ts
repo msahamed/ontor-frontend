@@ -16,6 +16,7 @@
 import { NextResponse } from "next/server";
 import { getSessionFromCookies } from "@/lib/auth";
 import { canView } from "@/lib/shares";
+import { getTodayData } from "@/lib/today-analytics";
 import {
   getByHour,
   getMatrix,
@@ -58,6 +59,16 @@ export async function GET(
 
   try {
     switch (panel) {
+      case "today": {
+        const day = url.searchParams.get("day") ?? "";
+        const parsed = Date.parse(`${day}T00:00:00Z`);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !Number.isFinite(parsed) ||
+            new Date(parsed).toISOString().slice(0, 10) !== day ||
+            parsed > Date.now() + 864e5 || parsed < Date.now() - 90 * 864e5) {
+          return NextResponse.json({ error: "bad_day" }, { status: 400 });
+        }
+        return NextResponse.json(await getTodayData(clientId, day), { headers });
+      }
       case "hour": {
         const raw = url.searchParams.get("keys")?.split(",") ?? ["confidence"];
         const keys = raw.filter(isMarker).slice(0, 3);

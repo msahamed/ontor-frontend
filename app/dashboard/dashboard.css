@@ -249,6 +249,28 @@
   .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px 18px 12px}
   .sect > .dials{padding:0}
 
+  /* Desktop dashboard parity: quiet tab rail and one shared time axis. */
+  .dashboard-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);margin:18px 0 24px}
+  .dashboard-tabs button{font:inherit;font-size:14px;font-weight:500;color:var(--ink-mute);background:none;border:0;border-bottom:2px solid transparent;padding:12px 20px 14px;cursor:pointer}
+  .dashboard-tabs button[aria-current="page"]{font-weight:700;color:var(--teal-dark);border-bottom-color:var(--teal)}
+  .dashboard-tabs button:hover{color:var(--teal)}
+  .today-view .sect{margin-bottom:28px}
+  .today-view .sectHead{align-items:center}
+  .today-date{font:inherit;font-size:13px;font-weight:650;color:var(--teal-dark);background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:7px 9px;max-width:190px}
+  .today-chips{padding:18px 0 12px}
+  .today-data-card{padding:14px 16px 8px}
+  .today-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .today-card-head strong{font-size:16px}
+  .today-card-head span{font-size:12px;color:var(--ink-mute)}
+  .today-meta,.today-legend{font-size:12px;color:var(--ink-mute);margin:5px 0 8px}
+  .today-legend{font-size:11px;margin-top:2px}
+  .today-empty{color:var(--ink-soft);font-size:14px;padding:32px 0}
+  .today-chart{display:block;width:100%;height:190px;overflow:visible;font-family:var(--font-hanken),sans-serif}
+  .activity-chart{height:90px}
+  .dashboard-tabs + .sect .dials{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  @media(max-width:800px){.dashboard-tabs + .sect .dials{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:580px){.dashboard-tabs + .sect .dials{grid-template-columns:1fr}.today-view .sectHead{align-items:flex-start;flex-direction:column}.today-date{max-width:100%}}
+
   /* Loading skeletons. Deliberately calm: a slow shimmer reads as
      "working", a fast one reads as broken. */
   .skel{background:var(--paper-3);border-radius:8px;position:relative;overflow:hidden}

@@ -21,8 +21,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import TodayView from "./today-view";
+import type { ActivityDay } from "@/lib/today-analytics";
 import {
   usualBand,
+  statMean,
   triage as computeTriage,
   type DayRow,
   type MarkerKey,
@@ -56,15 +59,15 @@ const ZONES: { key: MarkerKey; name: string }[] = [
   { key: "confidence", name: "Confidence" },
   { key: "energy", name: "Energy" },
   { key: "fatigue", name: "Fatigue" },
-  { key: "breathing", name: "Breathing" },
+  { key: "hesitation", name: "Hesitation" },
 ];
 
 const MAT_KEYS: MarkerKey[] = [
-  "stress", "confidence", "energy", "fatigue", "vocal_strain", "articulation", "breathing",
+  "stress", "confidence", "energy", "fatigue", "vocal_strain", "articulation", "hesitation",
 ];
 const MAT_NAMES: Record<MarkerKey, string> = {
   stress: "Stress", confidence: "Conf", energy: "Energy", fatigue: "Fatigue",
-  vocal_strain: "Strain", articulation: "Artic", breathing: "Breath",
+  vocal_strain: "Strain", articulation: "Artic", hesitation: "Hesitation",
 };
 /** The design's own circular-pair set. */
 const CIRC = new Set([
@@ -75,7 +78,7 @@ const pairKey = (a: string, b: string) => [a, b].sort().join("|");
 
 const HI_BAD: Record<MarkerKey, boolean> = {
   stress: true, fatigue: true, vocal_strain: true,
-  confidence: false, energy: false, breathing: false, articulation: false,
+  confidence: false, energy: false, hesitation: true, articulation: false,
 };
 
 const ord = (d: string) => Date.parse(d + "T00:00:00Z") / 86400000;
@@ -87,7 +90,7 @@ type HourData = { offset: number; fit: number; hours: HourRow[] };
 
 /** The factors offered next to confidence, as the design lists them. */
 const TOD_OVERLAYS: { key: MarkerKey; name: string }[] = [
-  { key: "breathing", name: "Breathing" },
+  { key: "hesitation", name: "Hesitation" },
   { key: "energy", name: "Energy" },
   { key: "stress", name: "Stress" },
   { key: "fatigue", name: "Fatigue" },
@@ -100,59 +103,80 @@ export default function CoachView({
   days,
   clientId,
   perspective = "member",
+  title = "You",
+  summary,
+  latestActivity,
 }: {
   days: DayRow[];
   clientId: string;
   perspective?: Perspective;
+  title?: string;
+  summary: string;
+  latestActivity?: ActivityDay | null;
 }) {
+  const [tab, setTab] = useState<"you" | "today" | "history">("today");
   const [range, setRange] = useState<Range>(30);
   const [zoneKey, setZoneKey] = useState<MarkerKey>("stress");
 
   const tri = computeTriage(days, 7);
-  const flagged = tri.filter((t) => t.level === 2);
-  const headline = flagged.length
-    ? flagged.length === 1
-      ? `${flagged[0]!.name} is off the usual`
-      : `${flagged.length} markers are off the usual`
-    : "Nothing well off the usual";
-
   const cards = DIALS.flatMap((d) => {
     const t = tri.find((x) => x.key === d.key);
-    return t ? [t] : [];
+    const lastDay = days.at(-1)?.day;
+    const recent = days.filter((row) => lastDay && ord(row.day) >= ord(lastDay) - 6)
+      .map((row) => row.m[d.key]).filter((value): value is number => value != null);
+    return recent.length ? [{ ...d, t, value: statMean(recent) }] : [];
   });
 
   return (
     <>
+      <div className="topbar"><div><h1>{tab === "today" ? "Today" : tab === "history" ? "History" : title}</h1>
+        <p className="sub">{tab === "today" ? "Your day at a glance." : tab === "history" ? "Patterns across your check-ins." : summary}</p>
+      </div></div>
+      <nav className="dashboard-tabs" aria-label="Dashboard views">
+        {(["you", "today", "history"] as const).map((item) =>
+          <button key={item} type="button" aria-current={tab === item ? "page" : undefined}
+            onClick={() => setTab(item)}>{item[0]!.toUpperCase() + item.slice(1)}</button>)}
+      </nav>
+      {tab === "you" && <>
       <section className="sect">
-        <h2 className="sectTitle">{headline}</h2>
+        <h2 className="sectTitle">Your markers</h2>
+        <p className="sub">Recent readings compared with your usual.</p>
         <div className="dials">
-          {cards.map((t) => {
-            const d = Math.round(Math.abs(t.delta));
-            const good = HI_BAD[t.key] ? t.delta < 0 : t.delta > 0;
-            const badge = t.level === 2 ? (good ? "Better than usual" : "Worth a look") : "Within usual range";
-            const badgeBg = t.level === 2 ? (good ? TEAL_TINT : "#F8EBE7") : LINE;
-            const badgeColor = t.level === 2 ? (good ? TEAL_DEEP : CLAY) : MUTED;
-            const border = t.level === 2 ? (good ? TEAL : CLAY) : CARD_LINE;
+          {cards.map((card) => {
+            const t = card.t;
+            const d = t ? Math.round(Math.abs(t.delta)) : 0;
+            const good = t ? (HI_BAD[card.key] ? t.delta < 0 : t.delta > 0) : false;
+            const badge = !t ? "Learning range" : t.level === 2 ? (good ? "Better than usual" : "Worth a look") : "Within usual range";
+            const badgeBg = t?.level === 2 ? (good ? TEAL_TINT : "#F8EBE7") : LINE;
+            const badgeColor = t?.level === 2 ? (good ? TEAL_DEEP : CLAY) : MUTED;
+            const border = t?.level === 2 ? (good ? TEAL : CLAY) : CARD_LINE;
             return (
-              <div className="dial" key={t.key} style={{ borderColor: border }}>
+              <div className="dial" key={card.key} style={{ borderColor: border }}>
                 <div className="dialtop">
-                  <span className="dialname">{t.name}</span>
+                  <span className="dialname">{card.name}</span>
                   <span className="dialbadge" style={{ background: badgeBg, color: badgeColor }}>{badge}</span>
                 </div>
                 <div className="dialrow">
                   <div>
-                    <div className="dialval num">{Math.round(t.recent)}</div>
+                    <div className="dialval num">{Math.round(t?.recent ?? card.value)}</div>
                     <div className="dialdelta num">
-                      {t.delta >= 0 ? "+" : "−"}{d} vs usual {Math.round(t.usual)}
+                      {t ? <>{t.delta >= 0 ? "+" : "−"}{d} vs usual {Math.round(t.usual)}</> : "Building your usual range"}
                     </div>
                   </div>
-                  <Spark points={sparkPoints(days, t.key, 10)} w={92} h={30} color={t.level === 2 ? (good ? TEAL : CLAY) : DOT_PLAIN} />
+                  <Spark points={sparkPoints(days, card.key, 10)} w={92} h={30} color={t?.level === 2 ? (good ? TEAL : CLAY) : DOT_PLAIN} />
                 </div>
               </div>
             );
           })}
+          <div className="dial"><div className="dialname">Computer activity</div><div className="dialval num">{latestActivity ? durationLabel(latestActivity.longestStretchMs) : "No data"}</div><div className="dialdelta">{latestActivity ? `Longest stretch on ${latestActivity.day}` : "Tracking has no synced data yet"}</div></div>
+          <div className="dial"><div className="dialname">Interaction pace</div><div className="dialval num">{latestActivity?.latestPace == null ? "Learning" : Math.round(latestActivity.latestPace)}</div><div className="dialdelta">{latestActivity?.paceBand ? "Higher = more energetic interaction pattern · Experimental" : "Building an interaction reference"}</div></div>
         </div>
       </section>
+      </>}
+
+      {tab === "today" && <TodayView clientId={clientId} />}
+
+      {tab === "history" && <>
 
       <section className="sect">
         <div className="eyebrow">Day by day, against {perspective === "self" ? "your" : "their"} usual</div>
@@ -182,8 +206,14 @@ export default function CoachView({
       <TimeOfDayPanel clientId={clientId} />
       <RecoveryPanel clientId={clientId} perspective={perspective} />
       <MatrixPanel clientId={clientId} />
+      </>}
     </>
   );
+}
+
+function durationLabel(ms: number) {
+  const minutes = Math.round(ms / 60000);
+  return minutes < 60 ? `${minutes}m` : `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
 }
 
 // ── Lazy panels ───────────────────────────────────────────────────
@@ -258,7 +288,7 @@ function useLazyPanel<T>(url: string) {
 }
 
 function TimeOfDayPanel({ clientId }: { clientId: string }) {
-  const [overlay, setOverlay] = useState<MarkerKey>("breathing");
+  const [overlay, setOverlay] = useState<MarkerKey>("hesitation");
   const [range, setRange] = useState<Range>(30);
   const keys: MarkerKey[] = ["confidence", overlay];
   const { data, state, ref } = useLazyPanel<HourData>(

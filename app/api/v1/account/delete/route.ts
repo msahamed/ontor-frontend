@@ -114,8 +114,9 @@ export async function POST(req: Request) {
       .findOne({ user_id: userId }, { projection: { email: 1 } });
     const email = account?.email ?? null;
 
-    const [obs, resets, events, profiles, shares, accounts] = await Promise.all([
+    const [obs, activity, resets, events, profiles, shares, accounts] = await Promise.all([
       observations.deleteMany({ user_id: userId }),
+      db.collection("activity_days").deleteMany({ user_id: userId }),
       db.collection("reset_sessions").deleteMany({ user_id: userId }),
       db.collection("events").deleteMany({ user_id: userId }),
       db.collection("profiles").deleteMany({ user_id: userId }),
@@ -147,6 +148,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       deleted: {
         observations: obs.deletedCount ?? 0,
+        activity_days: activity.deletedCount ?? 0,
         reset_sessions: resets.deletedCount ?? 0,
         clips: clipsDeleted,
         events: events.deletedCount ?? 0,
