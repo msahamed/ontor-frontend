@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import DownloadLink from "@/app/install/_components/DownloadLink";
 import styles from "../../page.module.css";
@@ -22,11 +22,11 @@ function detectPlatform(): Platform {
 }
 
 export default function HeroDownloadButtons() {
-  const [platform, setPlatform] = useState<Platform>("other");
-
-  useEffect(() => {
-    setPlatform(detectPlatform());
-  }, []);
+  const platform = useSyncExternalStore(
+    () => () => {},
+    detectPlatform,
+    () => "other" as Platform,
+  );
 
   const macPrimary = platform === "macos" || platform === "other";
   const windowsPrimary = platform === "windows";

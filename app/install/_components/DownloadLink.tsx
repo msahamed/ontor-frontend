@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import {
   getWebsiteUserId,
+  newDownloadId,
   trackWebsiteFunnelEvent,
 } from "@/lib/website-analytics";
 
@@ -26,22 +27,22 @@ export default function DownloadLink({
       className={className}
       href={href}
       onClick={(event) => {
-        const acquisitionId = getWebsiteUserId();
-        let downloadHref = href;
-        if (platform === "windows") {
-          const url = new URL(href);
-          url.searchParams.set("acquisition_id", acquisitionId);
-          downloadHref = url.toString();
-          // Set the destination synchronously so this same click downloads the
-          // tagged installer. The filename remains the friendly Ontor.exe.
-          event.currentTarget.href = downloadHref;
-        }
+        const visitorId = getWebsiteUserId();
+        const downloadId = newDownloadId();
+        const url = new URL(href, window.location.href);
+        if (downloadId) url.searchParams.set("acquisition_id", downloadId);
+        const downloadHref = url.toString();
+        // Each download gets its own public journey ID. The app keeps a
+        // separate private data ID; visitor_id links the earlier page view.
+        event.currentTarget.href = downloadHref;
         trackWebsiteFunnelEvent("installer_download", {
           platform,
+          ...(downloadId ? { userId: downloadId } : {}),
           props: {
             file_name: fileName,
             link_url: downloadHref,
-            acquisition_id: acquisitionId,
+            visitor_id: visitorId,
+            ...(downloadId ? { acquisition_id: downloadId } : {}),
             transport_type: "beacon",
           },
         });

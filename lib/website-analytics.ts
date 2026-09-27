@@ -22,7 +22,7 @@ function newId(): string {
   return `web-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-/** Stable anonymous browser id — later journey handoff can reuse this. */
+/** Stable anonymous browser visitor ID; distinct from app data identity. */
 export function getWebsiteUserId(): string {
   try {
     const existing = window.localStorage.getItem(USER_ID_KEY);
@@ -33,6 +33,13 @@ export function getWebsiteUserId(): string {
   } catch {
     return newId();
   }
+}
+
+/** One fresh journey ID per installer click; never a data access key. */
+export function newDownloadId(): string | null {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : null;
 }
 
 /** Rotates per tab session (cold open / new tab). */
@@ -173,6 +180,7 @@ export function trackWebsiteMongoEvent(
   event: string,
   options: {
     platform: string;
+    userId?: string;
     props?: Record<string, string | number | boolean>;
     tier?: "engagement" | "reliability";
   },
@@ -189,7 +197,7 @@ export function trackWebsiteMongoEvent(
   postWebsiteEventsToMongo([
     {
       id: newId(),
-      user_id: getWebsiteUserId(),
+      user_id: options.userId ?? getWebsiteUserId(),
       session_id: getWebsiteSessionId(),
       event,
       tier: options.tier ?? "engagement",
@@ -219,6 +227,7 @@ export function trackWebsiteFunnelEvent(
   name: string,
   options: {
     platform: string;
+    userId?: string;
     props?: Record<string, string | number | boolean>;
   },
 ) {
@@ -229,6 +238,7 @@ export function trackWebsiteFunnelEvent(
   trackWebsiteEvent(name, gaProps);
   trackWebsiteMongoEvent(name, {
     platform: options.platform,
+    userId: options.userId,
     props: options.props,
   });
 }
