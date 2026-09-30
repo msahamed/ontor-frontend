@@ -25,3 +25,16 @@ test('retry upserts are immutable and scoped to owner', () => {
   assert.deepEqual(Object.keys(write.update), ['$setOnInsert']);
   assert.equal(write.upsert, true);
 });
+test('explicit tiredness labels preserve both yes and no and reject ambiguous labels', () => {
+  for (const answer of ['yes', 'no']) {
+    const metadata = { question_id: 'feeling_tired_v1', question_text: 'Are you feeling tired?',
+      label_source: 'self_report', answer, feeling_tired: answer === 'yes', active_minutes: 65 };
+    const doc = sanitizeNudgeEvent({...raw, event: 'feedback_submitted', metadata}, user);
+    assert.deepEqual(doc.metadata, metadata);
+    for (const change of [{answer: 'dismiss'}, {feeling_tired: null},
+      {feeling_tired: answer !== 'yes'}, {label_source: 'inferred'}, {question_id: 'unknown'}]) {
+      assert.equal(sanitizeNudgeEvent({...raw, event: 'feedback_submitted', metadata: {...metadata, ...change}}, user), null);
+    }
+  }
+  assert.equal(sanitizeNudgeEvent({...raw, event: 'feedback_submitted'}, user), null);
+});
