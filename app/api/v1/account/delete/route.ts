@@ -118,6 +118,7 @@ export async function POST(req: Request) {
       observations.deleteMany({ user_id: userId }),
       db.collection("activity_days").deleteMany({ user_id: userId }),
       db.collection("reset_sessions").deleteMany({ user_id: userId }),
+      db.collection("model_checkpoints").deleteMany({ user_id: userId }),
       db.collection("nudge_events").deleteMany({ user_id: userId }),
       db.collection("events").deleteMany({ user_id: userId }),
       db.collection("profiles").deleteMany({ user_id: userId }),
