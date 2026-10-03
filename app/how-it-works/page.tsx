@@ -19,10 +19,10 @@ const markers = [
   ["Energy", "How activated your voice sounds through pace, effort, and flow.", 68, "More activated"],
   ["Stress", "How much tension and instability show in your voice.", 72, "More tension"],
   ["Fatigue", "How much tiredness shows through slower speech and longer pauses.", 29, "Less fatigue"],
-  ["Confidence", "How fluent and steady your voice sounds.", 62, "More steady"],
+  ["Focus", "An estimate of focus based on patterns in your voice.", 62, "Higher focus estimate"],
   ["Speech clarity", "How crisp and distinct your speech sounds.", 66, "More crisp"],
   ["Vocal strain", "How hard your voice appears to be working.", 34, "Less strain"],
-  ["Breathing", "How relaxed your breathing pattern appears between phrases.", 58, "More relaxed"],
+  ["Hesitation", "Pauses and interruptions in the flow of your speech.", 38, "Less hesitation"],
 ] as const;
 
 const waveHeights = [18, 34, 48, 25, 56, 42, 22, 38, 54, 29, 46, 20, 36, 52, 31, 44, 24, 50, 33, 19, 41, 55, 27, 38, 21, 47, 32, 52, 24, 39];
