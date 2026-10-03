@@ -3,6 +3,7 @@ import Link from "next/link";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import styles from "../marketing-pages.module.css";
+import teams from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Ontor for teams",
@@ -13,7 +14,7 @@ export default function ForTeamsPage() {
   return (
     <div className={styles.page}>
       <Nav />
-      <main className={styles.main}>
+      <main className={`${styles.main} ${teams.main}`}>
         <section className={styles.hero}>
           <p className={styles.eyebrow}>Ontor for teams</p>
           <h1>Help your team find time to reset.</h1>

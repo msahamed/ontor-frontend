@@ -29,7 +29,7 @@ export default function HowItWorksPage() {
   return (
     <div className={styles.page}>
       <Nav />
-      <main className={styles.main}>
+      <main className={`${styles.main} ${how.main}`}>
         <section className={styles.hero}>
           <p className={styles.eyebrow}>How Ontor works</p>
           <h1>Understand your patterns while you work.</h1>
