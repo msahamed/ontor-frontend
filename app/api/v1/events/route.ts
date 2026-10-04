@@ -14,14 +14,9 @@
 //   platform        "ios" | "android" | "macos" | ...
 //   props           free-form, schema-defined per event name
 //
-// Contract:
-//   - 2xx → client acks and removes from its outbox
-//   - 4xx (validation) → client drops the batch (won't retry)
-//   - 5xx / network err → client keeps batch in outbox, retries later
-//
-// Idempotency: we use the client-supplied event.id as _id, so a retry
-// after a partial network failure won't double-count. Duplicate inserts
-// throw a code-11000 error which we silently ignore.
+// The response lists accepted_ids only after writes succeed (or duplicate IDs
+// prove an earlier success). Clients remove only those IDs from their queue.
+// Partial write failures return 500; retry deduplication uses the event _id.
 
 import { after, NextResponse } from "next/server";
 import type { Db } from "mongodb";
@@ -197,7 +192,7 @@ export async function POST(req: Request) {
     );
   }
   if (list.length === 0) {
-    return NextResponse.json({ accepted: 0, dropped: 0 });
+    return NextResponse.json({ accepted: 0, dropped: 0, accepted_ids: [] });
   }
   if (list.length > MAX_BATCH_SIZE) {
     return NextResponse.json(
@@ -223,7 +218,7 @@ export async function POST(req: Request) {
     else dropped++;
   }
   if (valid.length === 0) {
-    return NextResponse.json({ accepted: 0, dropped });
+    return NextResponse.json({ accepted: 0, dropped, accepted_ids: [] });
   }
 
   const docs = valid.map((e) => ({
@@ -260,32 +255,17 @@ export async function POST(req: Request) {
       writeErrors?: { code?: number }[];
       result?: { nInserted?: number };
     };
-    const allDup =
-      e?.writeErrors?.every((w) => w?.code === 11000) === true ||
-      e?.code === 11000;
-    if (allDup) {
-      result = {
-        accepted: docs.length,
-        dropped,
-        deduped: true,
-      };
-    } else {
-      // Mixed batch: some inserted, some duplicates. nInserted (if
-      // present) tells us the new count; still a 2xx since the client
-      // can safely ack the whole batch.
-      const inserted = e?.result?.nInserted;
-      if (typeof inserted !== "number" || inserted < 0) {
-        console.error("[events] insert failed:", err);
-        return NextResponse.json({ error: "server" }, { status: 500 });
-      }
-      result = {
-        accepted: docs.length,
-        dropped,
-        new: inserted,
-        deduped: docs.length - inserted,
-      };
+    const allDup = e.writeErrors?.length
+      ? e.writeErrors.every((w) => w.code === 11000)
+      : e.code === 11000;
+    if (!allDup) {
+      // Partial non-duplicate failures must not acknowledge unwritten events.
+      console.error("[events] insert failed:", err);
+      return NextResponse.json({ error: "server" }, { status: 500 });
     }
+    result = { accepted: docs.length, dropped, deduped: true };
   }
+  result.accepted_ids = docs.map((doc) => doc._id);
 
   after(() => notifyOwnerMilestones(db, docs, { ip: requestIp }));
   return NextResponse.json(result);

@@ -38,3 +38,11 @@ test('automatic activation preserves AUC decision and previous model in the same
  assert.equal(sanitizeModelRecord({...e,comparison:{...comparison,ready:false}},id),null);
  assert.equal(sanitizeModelRecord({...e,previous_checkpoint_id:id},id),null);
 });
+test('AP promotion metadata is accepted with paired sample counts', () => {
+ const previous='22345678-1234-4234-8234-123456789abc';
+ const comparison={policy_version:'paired-ap-v1',metric:'average_precision',active_id:previous,candidate_id:id,shared_examples:3,independent_examples:3,positive_count:1,negative_count:2,active_ap:.5,candidate_ap:1,ready:true,scope:'shared_prospective_sessions_only'};
+ const event={schema_version:1,kind:'activation',id,user_id:id,device_id:id,created_at:cp.created_at,checkpoint_id:id,previous_checkpoint_id:previous,reason:'ap_improved_without_alert_regression',comparison};
+ assert.deepEqual(sanitizeModelRecord(event,id).comparison,comparison);
+ assert.equal(sanitizeModelRecord({...event,comparison:{...comparison,positive_count:4}},id),null);
+ assert.equal(sanitizeModelRecord({...event,comparison:{...comparison,candidate_ap:2}},id),null);
+});

@@ -43,7 +43,17 @@ export function sanitizeModelRecord(raw: unknown, user: string, receivedAt = new
       parent_weights_sha256: raw.parent_weights_sha256, delta_from_parent: raw.delta_from_parent,
       trainer: raw.trainer, training_metrics: raw.training_metrics };
   }
-    if (raw.comparison !== undefined) {
+    const apComparison = object(raw.comparison) && raw.comparison.metric === 'average_precision';
+    if (apComparison) {
+      const c = raw.comparison as Record<string, unknown>;
+      if (c.scope !== 'shared_prospective_sessions_only' ||
+          typeof c.active_id !== 'string' || !MODEL_UUID.test(c.active_id) ||
+          c.candidate_id !== raw.checkpoint_id ||
+          ![c.active_ap, c.candidate_ap].every(v => v === null || finite(v) && v >= 0 && v <= 1) ||
+          ![c.independent_examples, c.positive_count, c.negative_count].every(v => Number.isSafeInteger(v) && (v as number) >= 0) ||
+          c.independent_examples !== (c.positive_count as number) + (c.negative_count as number)) return null;
+    }
+    if (raw.comparison !== undefined && !apComparison) {
       const c = raw.comparison;
       if (!object(c) || c.scope !== 'shared_prospective_feedback_only' ||
           typeof c.active_id !== 'string' || !MODEL_UUID.test(c.active_id) ||
@@ -60,7 +70,9 @@ export function sanitizeModelRecord(raw: unknown, user: string, receivedAt = new
         typeof raw.previous_checkpoint_id !== 'string' || !MODEL_UUID.test(raw.previous_checkpoint_id) ||
         raw.previous_checkpoint_id === raw.checkpoint_id || !object(raw.comparison) ||
         raw.comparison.active_id !== raw.previous_checkpoint_id ||
-        raw.comparison.ready !== true || raw.reason !== 'auc_improved_twice') return null;
+        raw.comparison.ready !== true ||
+        !(apComparison ? ['ap_improved_without_alert_regression', 'ap_tied_alert_errors_improved'].includes(raw.reason as string)
+          : raw.reason === 'auc_improved_twice')) return null;
     return {...common,kind:'activation',checkpoint_id:raw.checkpoint_id,
       previous_checkpoint_id:raw.previous_checkpoint_id,comparison:raw.comparison,reason:raw.reason};
   }
