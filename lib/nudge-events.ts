@@ -1,9 +1,10 @@
-/** Immutable interaction history, separate from completed reset exercises. */
+/** Immutable reminder events in the shared reset_sessions collection. */
 export const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const EVENTS = new Set(['requested', 'shown', 'delivery_requested', 'delivery_failed', 'opened', 'dismissed', 'timeout', 'snoozed', 'cancelled', 'replaced', 'session_saved', 'session_ended', 'hidden', 'reset_started', 'reset_completed', 'reset_ended_early', 'feedback_submitted']);
 const SOURCES = new Set(['activity', 'in_call', 'after_call']);
 
 export interface NudgeEventDoc {
+  record_kind: 'reminder_event';
   _id: string;
   uuid: string;
   user_id: string;
@@ -58,7 +59,7 @@ export function sanitizeNudgeEvent(raw: unknown, userId: string, receivedAt = ne
   }
   if (r.live_session_id != null && (typeof r.live_session_id !== 'string' || !/^live_[0-9]{1,24}$/.test(r.live_session_id))) return null;
   return {
-    _id: r.uuid, uuid: r.uuid, user_id: userId, nudge_id: r.nudge_id,
+    record_kind: 'reminder_event', _id: r.uuid, uuid: r.uuid, user_id: userId, nudge_id: r.nudge_id,
     device_id: r.device_id, event: r.event, source: r.source,
     occurred_at: new Date(r.occurred_at).toISOString(), received_at: receivedAt,
     source_observation_uuid: (r.source_observation_uuid as string | null) ?? null,

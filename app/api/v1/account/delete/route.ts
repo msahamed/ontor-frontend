@@ -107,6 +107,10 @@ export async function POST(req: Request) {
       }
     }
 
+    await db.collection("computer_activity").deleteMany({ user_id: userId });
+    await db.collection("sync_migrations").deleteMany({ user_id: userId });
+    await db.collection("model_checkpoints").deleteMany({ user_id: userId });
+
     // 2. Mongo. Every collection keyed by this user, plus the session and
     //    code rows keyed by their email, so no credential outlives the data.
     const account = await db
@@ -118,7 +122,6 @@ export async function POST(req: Request) {
       observations.deleteMany({ user_id: userId }),
       db.collection("activity_days").deleteMany({ user_id: userId }),
       db.collection("reset_sessions").deleteMany({ user_id: userId }),
-      db.collection("model_checkpoints").deleteMany({ user_id: userId }),
       db.collection("nudge_events").deleteMany({ user_id: userId }),
       db.collection("events").deleteMany({ user_id: userId }),
       db.collection("profiles").deleteMany({ user_id: userId }),

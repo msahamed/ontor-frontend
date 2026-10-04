@@ -1,3 +1,5 @@
+import { activityDayFromObservations } from './computer-activity-view';
+import type { ComputerActivityDoc } from './computer-activity';
 import { getDb } from "@/lib/auth";
 import { usualBand, type UsualBand } from "@/lib/markers";
 
@@ -51,7 +53,7 @@ export async function getTodayData(userId: string, day: string) {
   }
   voice.sort((a, b) => a.at - b.at);
   const bands = Object.fromEntries(TODAY_MARKERS.map((k) => [k, usualBand(prior[k], 200)])) as Record<TodayMarker, UsualBand | null>;
-  const activity = await db.collection("activity_days").findOne(
+  const activity = await recordedActivityDay(userId, day) ?? await db.collection("activity_days").findOne(
     { user_id: userId, day }, { projection: { _id: 0, day: 1, activeMs: 1, longestStretchMs: 1, windows: 1, pace: 1, paceBand: 1, latestPace: 1 } },
   );
   return { voice, bands, activity: activity as ActivityDay | null };
@@ -59,8 +61,24 @@ export async function getTodayData(userId: string, day: string) {
 
 export async function getLatestActivity(userId: string): Promise<ActivityDay | null> {
   const db = await getDb();
+  const newest = await db.collection<ComputerActivityDoc>("computer_activity").findOne({user_id:userId}, {sort:{start_ms:-1}});
+  if (newest) {
+    const day = new Date(newest.start_ms + newest.utc_offset_minutes * 60000).toISOString().slice(0,10);
+    const recorded = await recordedActivityDay(userId, day);
+    if (recorded) return recorded;
+  }
   const row = await db.collection("activity_days").findOne(
     { user_id: userId }, { sort: { day: -1 }, projection: { _id: 0, day: 1, activeMs: 1, longestStretchMs: 1, windows: 1, pace: 1, paceBand: 1, latestPace: 1 } },
   );
   return row as ActivityDay | null;
+}
+
+async function recordedActivityDay(userId: string, day: string): Promise<ActivityDay | null> {
+  const db = await getDb();
+  const start = Date.parse(`${day}T00:00:00Z`);
+  // Capture-local dates can lie on either side of UTC midnight.
+  const documents = await db.collection<ComputerActivityDoc>("computer_activity").find({
+    user_id:userId, start_ms:{$gte:start-14*3600000,$lt:start+38*3600000},
+  }).sort({start_ms:1,device_id:1}).toArray();
+  return activityDayFromObservations(documents,day);
 }

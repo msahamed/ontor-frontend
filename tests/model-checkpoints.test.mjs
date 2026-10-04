@@ -16,3 +16,25 @@ test('evaluation is separate and cannot claim an inconsistent nudge result',()=>
  const e={schema_version:1,kind:'evaluation',id,user_id:id,device_id:id,created_at:cp.created_at,checkpoint_id:id,feedback_id:'snapshot2',tired:false,below_fraction:.5,through_ms:123000,minutes:50,pace_qualified:false,nudge_qualified:false,evaluated_before_training:true};
  assert.ok(sanitizeModelRecord(e,id));assert.equal(sanitizeModelRecord({...e,nudge_qualified:true},id),null);assert.equal(sanitizeModelRecord({...e,evaluated_before_training:false},id),null);
 });
+test('checkpoint policy and future AUC summaries survive cloud sanitization',()=>{
+ const summary={auc:.75,example_count:8,yes_count:4,no_count:4,policy_usable:true,scope:'prospective_feedback_only',score:'five_minute_below_baseline_fraction',first_feedback_at:cp.created_at,last_feedback_at:cp.created_at};
+ const policy={reason:'sustained_auc_decline',policy_version:'auc-gated-v1',new_examples:8,parent_evaluation:summary};
+ assert.deepEqual(sanitizeModelRecord({...cp,training_metrics:{...cp.training_metrics,training_policy:policy}},id).training_metrics.training_policy,policy);
+ const e={schema_version:1,kind:'evaluation',id,user_id:id,device_id:id,created_at:cp.created_at,checkpoint_id:id,feedback_id:'snapshot2',tired:false,below_fraction:.5,through_ms:123000,minutes:50,pace_qualified:false,nudge_qualified:false,evaluated_before_training:true,auc_summary:summary};
+ assert.deepEqual(sanitizeModelRecord(e,id).auc_summary,summary);
+ for(const patch of [{auc:1.1},{yes_count:-1},{example_count:9},{scope:'training_fit'}]) assert.equal(sanitizeModelRecord({...e,auc_summary:{...summary,...patch}},id),null);
+});
+test('paired future AUC comparison is preserved in the same evaluation record',()=>{
+ const comparison={policy_version:'paired-auc-v1',active_id:id,candidate_id:id,shared_examples:5,yes_count:2,no_count:3,active_auc:.5,candidate_auc:.7,previous_active_auc:.5,previous_candidate_auc:.65,ready:true,replaceable:false,scope:'shared_prospective_feedback_only'};
+ const e={schema_version:1,kind:'evaluation',id,user_id:id,device_id:id,created_at:cp.created_at,checkpoint_id:id,feedback_id:'snapshot2',tired:false,below_fraction:.5,through_ms:123000,minutes:50,pace_qualified:false,nudge_qualified:false,evaluated_before_training:true,comparison};
+ assert.deepEqual(sanitizeModelRecord(e,id).comparison,comparison);
+ assert.equal(sanitizeModelRecord({...e,comparison:{...comparison,shared_examples:7}},id),null);
+});
+test('automatic activation preserves AUC decision and previous model in the same collection',()=>{
+ const previous='22345678-1234-4234-8234-123456789abc';
+ const comparison={policy_version:'paired-auc-v1',active_id:previous,candidate_id:id,shared_examples:5,yes_count:2,no_count:3,active_auc:.5,candidate_auc:.7,previous_active_auc:.5,previous_candidate_auc:.65,ready:true,replaceable:false,scope:'shared_prospective_feedback_only'};
+ const e={schema_version:1,kind:'activation',id,user_id:id,device_id:id,created_at:cp.created_at,checkpoint_id:id,previous_checkpoint_id:previous,reason:'auc_improved_twice',comparison};
+ assert.deepEqual(sanitizeModelRecord(e,id).comparison,comparison);
+ assert.equal(sanitizeModelRecord({...e,comparison:{...comparison,ready:false}},id),null);
+ assert.equal(sanitizeModelRecord({...e,previous_checkpoint_id:id},id),null);
+});

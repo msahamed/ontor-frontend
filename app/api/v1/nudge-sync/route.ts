@@ -6,8 +6,20 @@ import { sanitizeNudgeEvent, nudgeEventUpsert, UUID_RE, type NudgeEventDoc } fro
 export const runtime = 'nodejs';
 const MAX_BATCH = 200;
 
-async function collection() {
-  const c = (await getMongoClient()).db('healthos').collection<NudgeEventDoc>('nudge_events');
+async function collection(user: string) {
+  const db = (await getMongoClient()).db('healthos');
+  // Compatibility migration: old clients keep using this endpoint, but all
+  // writes go to reset_sessions. Retain the legacy collection as a backup.
+  const legacy = db.collection<NudgeEventDoc>('nudge_events');
+  const target = db.collection<NudgeEventDoc>('reset_sessions');
+  const marker = db.collection('sync_migrations');
+  if (!await marker.findOne({user_id: user, migration: 'reset_events_v1'})) {
+    for await (const row of legacy.find({user_id: user})) {
+      await target.updateOne({_id: row._id, user_id: user}, {$setOnInsert: {...row, record_kind: 'reminder_event'}}, {upsert: true});
+    }
+    await marker.updateOne({user_id: user, migration: 'reset_events_v1'}, {$set: {completed_at: new Date()}}, {upsert: true});
+  }
+  const c = (await getMongoClient()).db('healthos').collection<NudgeEventDoc>('reset_sessions');
   await c.createIndex({ user_id: 1, received_at: 1, _id: 1 });
   return c;
 }
@@ -24,7 +36,7 @@ export async function POST(req: Request) {
   if (body.nudge_events.length > MAX_BATCH) return NextResponse.json({ error: 'batch_too_large' }, { status: 413 });
   const valid = body.nudge_events.map((r: unknown) => sanitizeNudgeEvent(r, user)).filter((r: NudgeEventDoc | null): r is NudgeEventDoc => r !== null);
   try {
-    const c = await collection();
+    const c = await collection(user);
     if (valid.length) await c.bulkWrite(valid.map(nudgeEventUpsert), { ordered: false });
     // Never acknowledge rejected documents. The client retains unacknowledged events.
     return NextResponse.json({ accepted_ids: valid.map((d: NudgeEventDoc) => d.uuid), rejected: body.nudge_events.length - valid.length });
@@ -46,7 +58,7 @@ export async function GET(req: Request) {
   const requested = Number(url.searchParams.get('limit') ?? MAX_BATCH);
   const limit = Number.isInteger(requested) && requested > 0 ? Math.min(requested, MAX_BATCH) : MAX_BATCH;
   try {
-    const rows = await (await collection()).find({ user_id: user, ...(after ? {
+    const rows = await (await collection(user)).find({ user_id: user, record_kind: 'reminder_event', ...(after ? {
       $or: [{ received_at: { $gt: since } }, { received_at: since, _id: { $gt: after } }],
     } : { received_at: { $gte: since } }) }).sort({ received_at: 1, _id: 1 }).limit(limit + 1).toArray();
     const page = rows.slice(0, limit);
