@@ -7,37 +7,53 @@ import type { Metadata } from "next";
 // Answer-shaped, definitional text so AI answer engines can quote it.
 const FAQ: { q: string; a: string }[] = [
   {
-    q: "What is Ontor?",
-    a: "Ontor is a voice-first, on-device iOS app that reads your nervous-system state from how you sound. Just takes your natural voice, analyzing your unscripted speech to surface eight signals — energy, stress, fatigue, confidence and more — so you catch shifts before you consciously feel them.",
+    "q": "What is Ontor?",
+    "a": "Ontor helps you understand how your workday is going. It shows changes in your voice and work rhythm compared with what is usual for you, and suggests a short reset or break when one may help."
   },
   {
-    q: "How does voice biomarker analysis work?",
-    a: "Ontor reads how you sound, not what you say. Each signal is a transparent, literature-grounded formula that blends acoustic features — pitch, loudness, pace, pauses, vocal clarity — scored against your own roughly 30-day baseline. It's a relative read of what's higher or lower than your usual, not a clinical or population score.",
+    "q": "What can I see in Today?",
+    "a": "Today brings together your voice readings, time spent at your computer, longest work stretch, current stretch, and work rhythm. You can see how your day has changed and compare readings with your usual range."
   },
   {
-    q: "Is my voice data private?",
-    a: "Your voice is analyzed on your device, and Ontor only ever analyzes you, not others nearby. By default nothing is uploaded; if you turn on optional sync, your results (not your raw audio) sync across your devices.",
+    "q": "What does work rhythm mean?",
+    "a": "Work rhythm describes the pace of your interactions with your computer, using basic activity counts and timing. It appears as Interaction pace in the desktop product. A lower reading means a slower pace compared with your usual pattern. It does not by itself mean you are tired."
   },
   {
-    q: "How is Ontor different from Oura, WHOOP, or Apple Watch?",
-    a: "Wearables track physiology — heart rate, HRV, sleep — and infer stress from it. Ontor reads psychological and nervous-system state such as confidence, vocal strain, and expressiveness that a wrist sensor can't detect. There's no hardware to wear, and it works alongside your wearable rather than replacing it.",
+    "q": "Does Ontor help when I am not speaking?",
+    "a": "Yes. On desktop, your work rhythm and time without a break can inform break reminders even when there are no voice readings. Voice readings appear when you speak during a session."
   },
   {
-    q: "What signals does Ontor track?",
-    a: "Eight: energy, stress, confidence, fatigue, vocal strain, expressiveness, articulation, and breathing — all read from how you sound.",
+    "q": "Do I have to start every voice session?",
+    "a": "On desktop, Ontor can start a voice session automatically when your microphone is in use. Automatic sessions stay in the menu bar, and you can open the live view when you want to see your readings. You can also start a session manually. Microphone permission is required for voice analysis."
   },
   {
-    q: "Who is Ontor for?",
-    a: "People whose performance and wellbeing depend on catching a bad state early — biohackers and self-trackers, performance-minded professionals, and anyone who wants the mind layer their wearable can't read.",
+    "q": "What voice signals can I see?",
+    "a": "Stress, Focus, Energy, Fatigue, Vocal strain, Speech clarity, and Hesitation. These are estimates based on patterns in your voice, compared with your personal reference. They are not a diagnosis or a direct measure of how you feel."
   },
   {
-    q: "Is Ontor a medical device?",
-    a: "No. Ontor is a general wellness tool for self-awareness. It does not diagnose, treat, or make clinical claims.",
+    "q": "Why does Ontor suggest a break?",
+    "a": "Ontor considers how long you have worked without a break and whether your work rhythm has stayed below your usual level. A long uninterrupted stretch can also prompt a reminder. You can snooze or dismiss it, and answer “Are you feeling tired?” to help personalize future readings."
   },
   {
-    q: "What does Ontor cost and what platforms does it support?",
-    a: "Ontor is free while in beta and launches on iPhone (iOS) first, currently via TestFlight.",
+    "q": "What information does Ontor use from my computer?",
+    "a": "While Ontor is running, it uses basic information such as how often you type, click, or scroll, and the timing of activity and pauses. This helps show your work rhythm and suggest breaks. It does not save what you type, which keys you press, or what you click on. Desktop activity does not require Accessibility access."
   },
+  {
+    "q": "What is saved or synced?",
+    "a": "Your readings, activity summaries, and feedback are saved on your device. If you turn on cloud sync, Ontor also backs up your history, check-in recordings, and information used to personalize your readings. Product usage and reliability data are handled separately, as explained in the privacy policy."
+  },
+  {
+    "q": "Can my team see my personal readings?",
+    "a": "Personal sessions and individual readings stay with you. Team views show aggregate patterns for discussions about workload and support. Contact us to discuss what is included in a team pilot."
+  },
+  {
+    "q": "Is Ontor a medical device?",
+    "a": "No. Ontor is a general wellness and performance tool. It does not diagnose or treat health conditions. Your own experience matters, and a reading or reminder may not match how you feel."
+  },
+  {
+    "q": "What does Ontor cost and where can I use it?",
+    "a": "Ontor is available for Mac and Windows. Start with a 14-day free trial, with no card required. After the trial, choose $20 a month or $168 a year. Team pilots are priced separately."
+  }
 ];
 
 const FAQ_JSONLD = {
@@ -51,7 +67,7 @@ const FAQ_JSONLD = {
 };
 
 const PAGE_DESCRIPTION =
-  "Frequently asked questions about Ontor — the voice-first, on-device app that reads your nervous-system state from how you sound. What it is, how voice biomarkers work, privacy, how it compares to wearables, and more.";
+  "Answers about Ontor for Mac and Windows: voice readings, work rhythm, break reminders, privacy, and pricing.";
 
 export const metadata: Metadata = {
   title: "FAQ — Ontor",
@@ -68,7 +84,7 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Ontor — Your voice is the biomarker that speaks first.",
+        alt: "Ontor voice readings and work rhythm",
       },
     ],
   },
@@ -97,8 +113,7 @@ export default function FaqPage() {
               Frequently asked questions.
             </h1>
             <p className="faq-lede">
-              What Ontor is, how it reads your voice, and how it&apos;s
-              different from the wearable on your wrist.
+              Voice readings, work rhythm, break reminders, and your data.
             </p>
           </div>
         </section>
@@ -131,10 +146,10 @@ export default function FaqPage() {
 
             <div className="faq-cta">
               <h2 className="font-serif-display">
-                Still curious what your voice has been telling you?
+                See how your workday is going.
               </h2>
-              <Link href="/#join" className="faq-cta-btn">
-                Join the waitlist
+              <Link href="/install" className="faq-cta-btn">
+                Try Ontor free
               </Link>
             </div>
           </div>
@@ -152,22 +167,22 @@ const FAQ_CSS = `
 .faq-wrap { max-width: 820px; margin: 0 auto; padding: 0 32px; }
 
 .faq-hero {
-  background: linear-gradient(168deg, #14272C 0%, #0E1D21 60%, #0A1417 100%);
-  color: #F4F1EA; padding: 80px 0 64px; text-align: center;
+  background: var(--paper);
+  color: var(--ink); padding: 80px 0 64px; text-align: left;
 }
 .faq-eyebrow {
   font-size: 12.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  color: #6FD6C9; display: inline-flex; align-items: center; gap: 9px;
+  color: var(--teal); display: inline-flex; align-items: center; gap: 9px;
 }
 .faq-eyebrow::before {
   content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--amber);
 }
 .faq-hero h1 {
   font-size: clamp(34px, 4.6vw, 50px); line-height: 1.06; margin: 18px 0 0;
-  color: #FBF8F1; letter-spacing: -0.02em;
+  color: var(--ink); letter-spacing: -0.02em;
 }
 .faq-lede {
-  margin: 18px auto 0; max-width: 560px; font-size: 18px; line-height: 1.6; color: #C9D4D2;
+  margin: 18px 0 0; max-width: 560px; font-size: 18px; line-height: 1.6; color: var(--ink-soft);
 }
 
 .faq-body { background: var(--paper-3); padding: 64px 0 80px; }
@@ -192,8 +207,8 @@ const FAQ_CSS = `
   max-width: 64ch;
 }
 
-.faq-cta { text-align: center; margin-top: 56px; }
-.faq-cta h2 { font-size: clamp(24px, 3vw, 32px); line-height: 1.12; margin: 0 auto 22px; max-width: 560px; }
+.faq-cta { text-align: left; margin-top: 56px; }
+.faq-cta h2 { font-size: clamp(24px, 3vw, 32px); line-height: 1.12; margin: 0 0 22px; max-width: 560px; }
 .faq-cta-btn {
   display: inline-block; background: var(--teal); color: #fff; text-decoration: none;
   font-weight: 600; font-size: 15px; border-radius: 12px; padding: 12px 22px;

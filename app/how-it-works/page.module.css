@@ -1,0 +1,53 @@
+.overview{margin-top:40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.overview>div{display:grid;grid-template-columns:260px 1fr;gap:20px;padding:22px 0}
+.overview>div+div{border-top:1px solid var(--line)}
+.overview strong{font-size:17px;color:var(--teal)}
+.overview p{margin:0;color:var(--ink-soft);line-height:1.6}
+.overview .overviewNote{padding:0 0 22px;font-size:14px}
+.range{position:relative;height:72px;margin-top:24px}
+.range:before{content:"";position:absolute;left:0;right:0;top:36px;border-top:1px solid var(--line-strong)}
+.rangeBand{position:absolute;left:34%;right:34%;top:10px;bottom:10px;background:var(--line);opacity:.65}
+.rangeMedian{position:absolute;left:50%;top:0;bottom:0;border-left:2px dashed var(--ink-soft);opacity:.55}
+.rangePoint{position:absolute;left:58%;top:29px;width:14px;height:14px;border-radius:50%;background:var(--teal)}
+.rangeLabels{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;color:var(--ink-soft);font-size:13px}
+.rangeLabels span:nth-child(2){text-align:center}
+.rangeLabels span:last-child{text-align:right}
+.markerDetails{margin-top:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:22px 0}
+.markerDetails summary{cursor:pointer;font-size:18px;font-weight:700;color:var(--teal)}
+.markerDetails summary:focus-visible{outline:2px solid var(--amber);outline-offset:5px}
+.markerDetails p,.note{color:var(--ink-soft);font-size:16px;line-height:1.6}
+.markerDetails dl{margin:24px 0 0}
+.markerDetails dl>div{display:grid;grid-template-columns:160px 1fr;gap:20px;padding:13px 0;border-top:1px solid var(--line)}
+.markerDetails dt{font-weight:700}
+.markerDetails dd{margin:0;color:var(--ink-soft);line-height:1.5}
+.note{margin:24px 0 0;max-width:670px}
+@media(max-width:600px){.overview>div{grid-template-columns:1fr;gap:6px}.markerDetails dl>div{grid-template-columns:1fr;gap:5px}.rangeLabels{font-size:11px;gap:6px}}
+.demo{margin:0 0 30px;padding:24px;border:1px solid var(--line);border-radius:18px;background:var(--paper-2)}
+.demoCaption{margin:0;color:var(--ink-soft);font-size:12px;line-height:1.5}
+.demoChoices{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 24px}
+.demo button{min-height:44px;padding:9px 14px;border:1px solid var(--line-strong);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit;font-size:14px;font-weight:650;cursor:pointer}
+.demo button[aria-pressed=true]{border-color:var(--teal);background:var(--teal-surface);color:var(--teal-dark)}
+.demo button:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.demo button:disabled{cursor:default;color:var(--ink-soft)}
+.demoContent{padding-top:22px;border-top:1px solid var(--line)}
+.demoContent h3{margin:0;font-size:26px;font-weight:800}
+.demoContent>p:not(.demoCaption){color:var(--ink-soft);font-size:14px}
+.demoMetrics{display:flex;flex-wrap:wrap;gap:18px 40px;margin-top:24px}
+.demoMetrics span{font-size:13px;color:var(--ink-soft)}
+.demoMetrics strong{display:block;color:var(--ink);font-size:17px;margin-top:5px}
+.demoChart{display:block;width:100%;height:auto;max-height:180px;margin-top:24px}
+.demoReminder{background:var(--paper);margin-top:24px;padding:18px;border:1px solid var(--line-strong);border-radius:12px}
+.reminderHeading{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.reminderHeading>strong{font-size:19px}
+.demoReminder>p{margin:8px 0;color:var(--ink-soft);font-size:14px;line-height:1.5}
+.demoFeedback{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px;margin-top:16px;background:var(--teal-surface);border-radius:8px}
+.demoFeedback>strong{font-size:15px;color:var(--teal-dark)}
+.demoFeedback>div{display:flex;gap:8px}
+.demoReminder .demoResponse{margin-top:14px;font-size:13px}
+.demoExplanation{margin:22px 0 0;color:var(--ink-soft);font-size:15px;line-height:1.6}
+@media(max-width:600px){.demo{padding:16px}.demoChoices button{flex:1}.reminderHeading{align-items:flex-start}.demoFeedback{padding:12px}}
+
+/* Tighter section rhythm on the explanatory page. */
+.main>section{padding-top:48px;padding-bottom:48px;border-top:0}
+.main>section:first-child{padding-top:64px;padding-bottom:48px}
+@media(max-width:760px){.main>section{padding-top:32px;padding-bottom:32px}.main>section:first-child{padding-top:40px;padding-bottom:32px}}

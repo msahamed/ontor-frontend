@@ -16,11 +16,13 @@ export const metadata: Metadata = {
 };
 
 const features = [
-  "Near real-time signals while you speak",
-  "Readings compared with your usual range",
-  "Session history and signal timelines",
-  "Suggested resets based on what changed",
-  "Before-and-after check-in comparisons",
+  "Today view with voice readings and daily work patterns",
+  "Voice signals including stress, focus, and energy",
+  "Work rhythm compared with your usual range",
+  "Daily activity time and uninterrupted work stretches",
+  "Break reminders you can snooze or dismiss",
+  "Feedback to help personalize your readings",
+  "Session history, guided resets, and before-and-after comparisons",
 ];
 
 export default function PricingPage() {
@@ -68,7 +70,7 @@ export default function PricingPage() {
         </section>
 
         <div className={styles.note}>
-          <span>You choose when Ontor listens.</span>
+          <span>Available for Mac and Windows. Microphone access is needed for voice analysis.</span>
           <Link href="/privacy">Read the privacy policy</Link>
         </div>
       </main>
