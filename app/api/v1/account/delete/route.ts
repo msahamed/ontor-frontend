@@ -107,6 +107,10 @@ export async function POST(req: Request) {
       }
     }
 
+    await db.collection("computer_activity").deleteMany({ user_id: userId });
+    await db.collection("sync_migrations").deleteMany({ user_id: userId });
+    await db.collection("model_checkpoints").deleteMany({ user_id: userId });
+
     // 2. Mongo. Every collection keyed by this user, plus the session and
     //    code rows keyed by their email, so no credential outlives the data.
     const account = await db
@@ -114,10 +118,11 @@ export async function POST(req: Request) {
       .findOne({ user_id: userId }, { projection: { email: 1 } });
     const email = account?.email ?? null;
 
-    const [obs, activity, resets, events, profiles, shares, accounts] = await Promise.all([
+    const [obs, activity, resets, nudges, events, profiles, shares, accounts] = await Promise.all([
       observations.deleteMany({ user_id: userId }),
       db.collection("activity_days").deleteMany({ user_id: userId }),
       db.collection("reset_sessions").deleteMany({ user_id: userId }),
+      db.collection("nudge_events").deleteMany({ user_id: userId }),
       db.collection("events").deleteMany({ user_id: userId }),
       db.collection("profiles").deleteMany({ user_id: userId }),
       // Both directions: what they shared out, and what was shared with them.
@@ -150,6 +155,7 @@ export async function POST(req: Request) {
         observations: obs.deletedCount ?? 0,
         activity_days: activity.deletedCount ?? 0,
         reset_sessions: resets.deletedCount ?? 0,
+        nudge_events: nudges.deletedCount ?? 0,
         clips: clipsDeleted,
         events: events.deletedCount ?? 0,
         profiles: profiles.deletedCount ?? 0,

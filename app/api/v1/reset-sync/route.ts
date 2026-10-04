@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sanitizeCaptureMetadata, capturePreservingReplacement } from "@/lib/capture-metadata";
+import { sanitizeCaptureMetadata } from "@/lib/capture-metadata";
 import type { AnyBulkWriteOperation } from "mongodb";
 
 import { authorizeUser } from "@/lib/auth";
@@ -14,6 +14,10 @@ const UUID_RE =
 interface ResetSessionDoc {
   _id: string;
   user_id: string;
+  record_kind: string;
+  source_nudge_id: string | null;
+  source: string;
+  device_id: string | null;
   exercise_id: string;
   started_at: Date;
   ended_at: Date;
@@ -68,6 +72,10 @@ function sanitize(raw: unknown, userId: string): ResetSessionDoc | null {
       : null;
   return {
     _id: id,
+    record_kind: "exercise",
+    device_id: typeof value.device_id === "string" && UUID_RE.test(value.device_id) ? value.device_id : null,
+    source_nudge_id: typeof value.source_nudge_id === "string" && UUID_RE.test(value.source_nudge_id) ? value.source_nudge_id : null,
+    source: source ? "after_call" : "manual",
     user_id: userId,
     exercise_id: exerciseId,
     started_at: startedAt,
@@ -113,9 +121,9 @@ export async function POST(req: Request) {
   const operations: AnyBulkWriteOperation<ResetSessionDoc>[] = valid.map(
     (row) => ({
       updateOne: {
-        // Same UUID makes retries idempotent; preserve original capture metadata.
-        filter: { _id: row._id },
-        update: capturePreservingReplacement(row),
+        // Completed session documents are immutable; retries preserve provenance.
+        filter: { _id: row._id, user_id: userId },
+        update: {$setOnInsert: row},
         upsert: true,
       },
     }),
@@ -128,6 +136,7 @@ export async function POST(req: Request) {
       ? await collection.bulkWrite(operations, { ordered: false })
       : { upsertedCount: 0, modifiedCount: 0 };
     return NextResponse.json({
+      accepted_ids: valid.map(row => row._id),
       accepted: valid.length,
       dropped: body.reset_sessions.length - valid.length,
       upserted: result.upsertedCount,
@@ -173,7 +182,7 @@ export async function GET(req: Request) {
       .db("healthos")
       .collection<ResetSessionDoc>("reset_sessions");
     const rows = await collection
-      .find(filter, { projection: { received_at: 0 } })
+      .find({...filter, record_kind: {$ne: "reminder_event"}}, { projection: { received_at: 0 } })
       .sort({ updated_at: 1, _id: 1 })
       .limit(limit + 1)
       .toArray();
