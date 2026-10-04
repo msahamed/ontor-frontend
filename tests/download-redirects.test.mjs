@@ -10,9 +10,7 @@ const acquisition = 'ec3f0b9a-1111-4222-8333-444455556666';
 
 for (const [path, target] of [
   ['/downloads/mac/Ontor.dmg', '/mac/Ontor.dmg'],
-  ['/downloads/windows/Ontor.exe', '/mac/windows/Ontor.exe'],
   ['/downloads/mac/appcast.xml', '/mac/appcast.xml'],
-  ['/downloads/windows/appcast.xml', '/mac/windows/appcast.xml'],
   ['/downloads/mac/Ontor-1.0.0-100.dmg', '/mac/Ontor-1.0.0-100.dmg'],
   ['/downloads/mac/update.delta', '/mac/update.delta'],
 ]) {
@@ -37,3 +35,13 @@ test('untagged downloads work and install pages are not redirected to S3', async
   });
   assert.equal(page.headers.get('location'), null);
 });
+
+for (const name of ['Ontor.exe', 'Ontor-1.0.8-88.exe', 'appcast.xml']) {
+  test(`Windows ${name} retains first-party delivery`, async () => {
+    const response = await unstable_getResponseFromNextConfig({
+      url: `https://ontor.ai/downloads/windows/${name}?acquisition_id=${acquisition}`, nextConfig,
+    });
+    assert.equal(response.headers.get('location'), null);
+    assert.equal(response.headers.get('x-middleware-rewrite'), `${bucket}/mac/windows/${name}?acquisition_id=${acquisition}`);
+  });
+}

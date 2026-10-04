@@ -1,8 +1,9 @@
 # Direct S3 installer delivery
 
-The download namespaces in `next.config.ts` now issue temporary 307 redirects
-to the existing `ontor-releases` S3 bucket. Installer and updater bytes go from
-S3 to the client; Vercel only handles the redirect. AWS request and transfer
+The macOS download namespace in `next.config.ts` issues temporary 307 redirects
+to the existing `ontor-releases` S3 bucket. Windows retains the previous
+first-party proxy while redirect compatibility with installed updaters is investigated.
+On macOS, installer and updater bytes go directly from S3 to the client. AWS request and transfer
 usage still applies. This change is not bot protection.
 
 The buttons and first-party URLs stay the same. Next passes through query
