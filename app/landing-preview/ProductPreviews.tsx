@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Logo from "../components/Logo";
 import s from "./preview.module.css";
 
@@ -28,6 +29,18 @@ export function PaceChart({voice = false, marker = 0}: {voice?:boolean; marker?:
 
 export function TodayPreview({compact=false, phase}: {compact?:boolean; phase?:number}) {
   const [marker,setMarker]=useState(0);
+  if (phase === undefined) return <div className={s.dashboardCapture}>
+    <a href="/landing/dashboard-oct-8.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open October 8 dashboard at full size"><Image src="/landing/dashboard-oct-8.jpg" width={2218} height={1720} priority alt="Ontor dashboard for October 8: 7 hours 15 minutes active, longest stretch 1 hour 37 minutes. Computer activity and voice readings appear above a tiredness chart, starting at 48, reaching 61, and ending at 49." /></a>
+    <svg className={s.dashboardAnnotation} viewBox="0 0 1000 774" role="img" aria-label="Highlighted early sharp rise and later spike in tiredness: detect and pause before fatigue hurts. Illustrative guidance.">
+      {/* Hide the capture-specific timestamp in the landing-page presentation. */}
+      <rect x="632" y="445" width="270" height="28" fill="#fff" />
+      <path d="M660 490 C681 490 687 490 703 511" fill="none" stroke="#b63e2e" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="m693 510 11 3-2-11" fill="none" stroke="#b63e2e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M370 510 C370 532 390 538 405 554" fill="none" stroke="#b63e2e" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="m395 548 10 6-2-11" fill="none" stroke="#b63e2e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <text x="650" y="498" textAnchor="end" fill="#913326" fontSize="25" fontWeight="750">Detect &amp; pause before fatigue hurts.</text>
+    </svg>
+  </div>;
   return <div className={`${s.today} ${compact?s.todayCompact:""}`}>
     <div className={s.windowBar}><span aria-hidden="true"><i/><i/><i/></span><strong>Ontor</strong></div>
     <div className={s.todayBody}>
