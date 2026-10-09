@@ -23,7 +23,11 @@ export default function LandingPage({ variant = "a", preview = false }: { varian
     <main id="top">
       <section className={s.hero}>
         <HeroCopy />
-        {variant==="a" && <figure className={s.heroFigure}><TodayPreview/><figcaption>Voice readings and work rhythm, together in Today. Illustrative product preview.</figcaption></figure>}
+        {variant==="a" && <figure className={s.heroFigure}>
+          <div className={s.previewIntro}><h2>When you’re tired, it’s easier to make mistakes.</h2></div>
+          <TodayPreview/>
+          <figcaption>October 8 in Ontor. Annotation illustrates a possible moment to pause.</figcaption>
+        </figure>}
         {variant==="b" && <figure className={s.dayFigure}><div className={s.dayRail}><span>Your day</span><strong>Work</strong><i/><strong>Notice</strong><i/><strong>Reset</strong></div><div><TodayPreview/><figcaption>Your patterns through the day. Illustrative product preview.</figcaption></div></figure>}
         {variant==="c" && <WorkdayExplorer/>}
       </section>

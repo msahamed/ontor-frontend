@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withBotId } from "botid/next/config";
 
 const nextConfig: NextConfig = {
   trailingSlash: true,
@@ -6,6 +7,14 @@ const nextConfig: NextConfig = {
   // Sparkle has been verified with direct S3 delivery on macOS.
   async redirects() {
     return [{
+      source: "/downloads/mac/Ontor.dmg",
+      destination: "/install/mac/",
+      permanent: false,
+    }, {
+      source: "/downloads/windows/Ontor.exe",
+      destination: "/install/windows/",
+      permanent: false,
+    }, {
       source: "/downloads/mac/:path*",
       destination: "https://ontor-releases.s3.us-east-2.amazonaws.com/mac/:path*",
       permanent: false,
@@ -21,4 +30,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBotId(nextConfig);
