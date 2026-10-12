@@ -65,13 +65,25 @@ export function TodayPreview({compact=false, phase}: {compact?:boolean; phase?:n
 
 export function NudgePreview() {
   const [answer,setAnswer]=useState<string|null>(null);
-  const [snoozed,setSnoozed]=useState(false);
-  return <div className={s.nudge}>
-    <div className={s.nudgeTop}><span><Logo size={25}/> <strong>Ontor</strong> <small>30s</small></span><button type="button" onClick={()=>setSnoozed(!snoozed)}><span>{snoozed?"Snoozed":"Snooze"}</span><svg width="8" height="6" viewBox="0 0 10 7" aria-hidden="true"><path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg></button></div>
-    <h3>65 minutes without a break</h3><p>Take a 5-minute walk.</p>
-    <div className={s.feedback}><strong>Are you feeling tired?</strong><div>{["Yes","Sort of","No"].map(x=><button type="button" key={x} aria-pressed={answer===x} onClick={()=>setAnswer(x)}>{x}</button>)}</div></div>
-    <p className={s.feedbackHint}>Your feedback helps Ontor learn when a reminder is useful.</p>
-    {answer && <p className={s.answer} role="status">{answer==="Yes"?"You’re feeling tired.":answer==="Sort of"?"You’re feeling a little tired.":"You’re not feeling tired."} Demo only; answer not saved.</p>}
+  const [dismissal,setDismissal]=useState<string|null>(null);
+  return <div className={s.nudge} aria-label="Illustrative stretch break reminder">
+    {dismissal ? <div className={s.nudgeMain}>
+      <p role="status">{dismissal} Demo only.</p>
+      <button className={s.nudgeSecondary} type="button" onClick={()=>setDismissal(null)}>Show reminder again</button>
+    </div> : <>
+      <div className={s.nudgeMain}>
+        <div className={s.nudgeTop}><span><Logo size={28}/><strong>Ontor</strong></span><button type="button" aria-label="Dismiss preview" onClick={()=>setDismissal("Reminder dismissed.")}>×</button></div>
+        <h3>Walk 3 min, then stretch gently.</h3>
+        <p className={s.nudgeBenefit}>Short walks can support alertness and blood flow.</p>
+        <p className={s.nudgeContext}><strong>60 min</strong> of continuous activity</p>
+        <div className={s.nudgeActions}>
+          <button className={s.nudgePrimary} type="button" onClick={()=>setDismissal("Time for a walk and gentle stretch.")}>I’ll stretch</button>
+          <button className={s.nudgeSecondary} type="button" onClick={()=>setDismissal("Reminder snoozed.")}>Snooze</button>
+        </div>
+      </div>
+      <div className={s.feedback}><strong>Are you feeling tired?</strong><div>{["Yes","No"].map(x=><button type="button" key={x} aria-pressed={answer===x} onClick={()=>setAnswer(x)}>{x}</button>)}</div></div>
+      {answer && <p className={s.answer} role="status">Demo answer: {answer}. Not saved.</p>}
+    </>}
   </div>;
 }
 
