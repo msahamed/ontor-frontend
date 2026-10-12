@@ -162,3 +162,21 @@
 .compactStage{background:var(--teal-surface)}
 
 .nudge>.feedbackHint{font-size:11px;line-height:1.5;margin-top:10px;color:var(--ink-soft)}
+
+.rotatingLine{display:flex;align-items:center;gap:16px;min-height:1.2em;margin:5px 0;color:var(--ink)}
+.heroQuestions{display:grid;text-align:left}
+.heroQuestions>span{grid-area:1/1;white-space:nowrap;opacity:0;animation:heroQuestion 14s ease-in-out infinite}
+.rotatingLine[data-paused=true] .heroQuestions>span{animation-play-state:paused}
+.heroMotionToggle{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--ink-soft);cursor:pointer}
+.heroMotionToggle:hover{background:var(--paper-2)}
+.heroQuestionAccessible{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.heroQuestionStatic{display:none}
+@keyframes heroQuestion{0%{opacity:0;transform:translateY(6px)}1.786%,23.214%{opacity:1;transform:translateY(0)}25%,100%{opacity:0;transform:translateY(-6px)}}
+@media(prefers-reduced-motion:reduce){.heroQuestions,.heroMotionToggle{display:none}.heroQuestionStatic{display:inline}}
+
+.privacyBadge{display:inline-block;margin-bottom:20px;padding:7px 12px;border-radius:999px;background:var(--teal-surface);color:var(--teal);font-size:13px;font-weight:650;line-height:1.4}
+.healthNote{max-width:740px;margin:28px 0 0;padding-top:24px;border-top:1px solid var(--line);font-size:15px;line-height:1.65;color:var(--ink-soft)}
+.healthNote a,.privacyNote a{color:var(--teal);text-underline-offset:4px}
+.privacyNote{max-width:740px;margin-bottom:40px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.privacyNote p{margin:0 0 10px;font-size:17px;line-height:1.6;color:var(--ink)}
+.privacyNote a{font-size:14px;font-weight:650}

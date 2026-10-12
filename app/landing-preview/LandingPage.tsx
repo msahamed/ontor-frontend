@@ -5,12 +5,14 @@ import HeroDownloadButtons from "../components/landing/HeroDownloadButtons";
 import PreservedSections from "./PreservedSections";
 import { TodayPreview, NudgePreview, CompactPreview, WorkdayExplorer } from "./ProductPreviews";
 import s from "./preview.module.css";
+import RotatingHeroLine from "./RotatingHeroLine";
 
 const concepts = [{id:"a",label:"A · Today first"},{id:"b",label:"B · A workday unfolds"},{id:"c",label:"C · The useful moment"}];
 
 function HeroCopy() {
   return <div className={s.heroCopy}>
-    <h1>Hours at your computer.<br /><span className={s.heroHighlight}>Take a smart break!!</span></h1>
+    <span className={s.privacyBadge}>On-device · Private</span>
+    <h1>Hours at your computer.<RotatingHeroLine /><span className={s.heroHighlight}>Take a smart break!!</span></h1>
     <p>Ontor learns how you interact with your computer to notice changes in your focus and work rhythm, then suggests a short break or simple exercise when it may help</p>
     <HeroDownloadButtons />
   </div>;
@@ -26,7 +28,6 @@ export default function LandingPage({ variant = "a", preview = false }: { varian
         {variant==="a" && <figure className={s.heroFigure}>
           <div className={s.previewIntro}><h2>When you’re tired, it’s easier to make mistakes.</h2></div>
           <TodayPreview/>
-          <figcaption>October 8 in Ontor. Annotation illustrates a possible moment to pause.</figcaption>
         </figure>}
         {variant==="b" && <figure className={s.dayFigure}><div className={s.dayRail}><span>Your day</span><strong>Work</strong><i/><strong>Notice</strong><i/><strong>Reset</strong></div><div><TodayPreview/><figcaption>Your patterns through the day. Illustrative product preview.</figcaption></div></figure>}
         {variant==="c" && <WorkdayExplorer/>}
@@ -40,7 +41,7 @@ export default function LandingPage({ variant = "a", preview = false }: { varian
       )}
 
       <section className={s.supportSection}>
-        <header><h2>Know when to pause as focus slips and fatigue builds.</h2><p>Ontor considers how long you’ve been working and what’s changed from your usual patterns to suggest when a reset may help. Take a five-minute walk, try a short exercise, or snooze until you’re ready.</p></header>
+        <header><h2>Know when to pause as focus slips and fatigue builds.</h2></header>
         {variant==="a" && <>
           <div className={s.supportRow}><div><span className={s.context}>Between calls</span><h3>You’ve been working for a while.</h3><p>Take a three-minute walk, then stretch gently. Snooze the reminder when you need more time.</p></div><div className={s.nudgeStage}><NudgePreview/></div></div>
           <div className={s.supportRow}><div><span className={s.context}>During a call</span><h3>Live feedback. Room to keep talking.</h3><p>When your voice shifts from its usual pattern, a small cue suggests an action you can take during the conversation. No need to stop talking or open another screen.</p></div><div className={s.compactStage}><span className={s.menuBar}>◷ &nbsp; Ontor · Listening</span><CompactPreview/></div></div>
@@ -54,9 +55,10 @@ export default function LandingPage({ variant = "a", preview = false }: { varian
           <div className={s.companionTop}><div><h3>Quietly there while you work.</h3><p>See live voice feedback during a call. Let work rhythm inform reminders between conversations.</p><CompactPreview/></div><div className={s.companionNudge}><NudgePreview/></div></div>
           <p className={s.companionNote}>You choose the next step: a break, a simple exercise, or more time to finish what you’re doing.</p>
         </div>}
+        <p className={s.healthNote}>Spending more time sedentary is associated with higher risks of type 2 diabetes and cardiovascular disease. Moving more and limiting sedentary time supports health. <a href="https://www.who.int/news-room/fact-sheets/detail/physical-activity" target="_blank" rel="noopener noreferrer">WHO guidance ↗</a></p>
       </section>
       <PreservedSections calm={variant === "a"} />
-      <section className={s.close}><h2>Try Ontor during your next workday.</h2><HeroDownloadButtons/><div className={s.closeLinks}><Link href="/privacy/">How your data is used ↗</Link><Link href="/for-teams/">Explore Ontor for teams ↗</Link></div></section>
+      <section className={s.close}><div className={s.privacyNote}><p>Your analysis runs on your device. Cloud backup is optional and off by default.</p><Link href="/privacy/">How privacy works ↗</Link></div><h2>Try Ontor during your next workday.</h2><HeroDownloadButtons/><div className={s.closeLinks}><Link href="/for-teams/">Explore Ontor for teams ↗</Link></div></section>
     </main>
     <Footer />
   </div>;
