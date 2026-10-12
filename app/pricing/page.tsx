@@ -15,16 +15,6 @@ export const metadata: Metadata = {
   },
 };
 
-const features = [
-  "Today view with voice readings and daily work patterns",
-  "Voice signals including stress, focus, and energy",
-  "Work rhythm compared with your usual range",
-  "Daily activity time and uninterrupted work stretches",
-  "Break reminders you can snooze or dismiss",
-  "Feedback to help personalize your readings",
-  "Session history, guided resets, and before-and-after comparisons",
-];
-
 export default function PricingPage() {
   return (
     <>
@@ -49,12 +39,9 @@ export default function PricingPage() {
             </div>
           </div>
 
-          <div className={styles.included}>
-            <h3>What&apos;s included</h3>
-            <ul>
-              {features.map((feature) => <li key={feature}><span aria-hidden="true">✓</span>{feature}</li>)}
-            </ul>
-          </div>
+          <p className={styles.benefit}>
+            Help you stay focused on your work and finish the day with more energy.
+          </p>
         </section>
 
         <section className={styles.teams}>
