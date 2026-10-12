@@ -10,8 +10,8 @@ const concepts = [{id:"a",label:"A · Today first"},{id:"b",label:"B · A workda
 
 function HeroCopy() {
   return <div className={s.heroCopy}>
-    <h1>Hours at your computer.<br /><span className={s.heroHighlight}>Losing focus?</span></h1>
-    <p>Ontor learns from your voice and computer interactions to notice when focus and work rhythm shift from what’s usual, then nudges you when a break or simple exercise may help.</p>
+    <h1>Hours at your computer.<br /><span className={s.heroHighlight}>Take a smart break!!</span></h1>
+    <p>Ontor learns how you interact with your computer to notice changes in your focus and work rhythm, then suggests a short break or simple exercise when it may help</p>
     <HeroDownloadButtons />
   </div>;
 }
@@ -42,8 +42,8 @@ export default function LandingPage({ variant = "a", preview = false }: { varian
       <section className={s.supportSection}>
         <header><h2>Know when to pause as focus slips and fatigue builds.</h2><p>Ontor considers how long you’ve been working and what’s changed from your usual patterns to suggest when a reset may help. Take a five-minute walk, try a short exercise, or snooze until you’re ready.</p></header>
         {variant==="a" && <>
-          <div className={s.supportRow}><div><span className={s.context}>Between calls</span><h3>You’ve been working for a while.</h3><p>Step away for a five-minute walk. Stretch your legs and give your eyes a break from the screen. Snooze the reminder when you need more time.</p></div><div className={s.nudgeStage}><NudgePreview/><small>Preview · Try Yes, Sort of, or No</small></div></div>
-          <div className={s.supportRow}><div><span className={s.context}>During a call</span><h3>Live feedback. Room to keep talking.</h3><p>When your voice shifts from its usual pattern, a small cue suggests an action you can take during the conversation. No need to stop talking or open another screen.</p></div><div className={s.compactStage}><span className={s.menuBar}>◷ &nbsp; Ontor · Listening</span><CompactPreview/><small>Illustrative live view</small></div></div>
+          <div className={s.supportRow}><div><span className={s.context}>Between calls</span><h3>You’ve been working for a while.</h3><p>Take a three-minute walk, then stretch gently. Snooze the reminder when you need more time.</p></div><div className={s.nudgeStage}><NudgePreview/></div></div>
+          <div className={s.supportRow}><div><span className={s.context}>During a call</span><h3>Live feedback. Room to keep talking.</h3><p>When your voice shifts from its usual pattern, a small cue suggests an action you can take during the conversation. No need to stop talking or open another screen.</p></div><div className={s.compactStage}><span className={s.menuBar}>◷ &nbsp; Ontor · Listening</span><CompactPreview/></div></div>
         </>}
         {variant==="b" && <div className={s.workdaySteps}>
           <article><div className={s.stepCopy}><span className={s.context}>In the conversation</span><h3>See a change as you speak.</h3><p>Voice readings stay nearby in the compact view. You can keep it closed and check your day later.</p></div><CompactPreview/></article>
