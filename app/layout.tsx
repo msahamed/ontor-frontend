@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SITE_TITLE, SITE_DESCRIPTION, SOCIAL_GRAPH, SOCIAL_IMAGE } from "./site-metadata";
 import localFont from "next/font/local";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
@@ -43,35 +44,18 @@ const hanken = localFont({
   fallback: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
 });
 
-const DESCRIPTION =
-  "Ontor is performance intelligence from your voice. It sits in your menu bar and reads your nervous-system state — stress, energy, confidence and more — from how you sound across real calls, plus a few-second check-in on mobile. " +
-  "It only ever listens to you (speaker-gated), runs on-device, and needs no wearable. macOS, Windows, iOS & Android.";
+const DESCRIPTION = SITE_DESCRIPTION;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ontor.ai"),
-  title: "Ontor — Performance intelligence from your voice",
+  title: SITE_TITLE,
   description: DESCRIPTION,
-  openGraph: {
-    title: "Ontor — Performance intelligence from your voice",
-    description: DESCRIPTION,
-    // Do not set url here — it inherits to every page and makes Google
-    // select the homepage as canonical (install funnel SEO). Set per-page.
-    siteName: "Ontor",
-    type: "website",
-    images: [
-      {
-        url: "/og.png?v=2",
-        width: 1200,
-        height: 630,
-        alt: "Ontor detects shifts and helps you reset.",
-      },
-    ],
-  },
+  openGraph: SOCIAL_GRAPH,
   twitter: {
     card: "summary_large_image",
-    title: "Ontor — Performance intelligence from your voice",
+    title: SITE_TITLE,
     description: DESCRIPTION,
-    images: ["/og.png?v=2"],
+    images: [SOCIAL_IMAGE],
   },
   verification: {
     other: {
