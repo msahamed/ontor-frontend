@@ -13,11 +13,7 @@
 .planAction a{display:flex;align-items:center;justify-content:center;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid var(--line-strong);background:var(--paper-3);color:var(--ink);font-size:15px;font-weight:700;text-decoration:none;box-shadow:none;transition:background .2s}
 .planAction a:hover{background:color-mix(in srgb,var(--paper-3) 90%,var(--ink) 10%)}
 .planAction span{color:var(--ink-soft);font-size:12px}
-.included{padding:27px 32px 30px;border-top:1px solid var(--line);background:var(--teal-surface)}
-.included h3{margin:0;font-size:16px}
-.included ul{display:grid;grid-template-columns:1fr 1fr;gap:13px 32px;margin:18px 0 0;padding:0;list-style:none}
-.included li{display:flex;gap:10px;color:var(--ink-soft);font-size:15px;line-height:1.45}
-.included li span{color:var(--teal);font-weight:800}
+.benefit{margin:0;padding:27px 32px 30px;border-top:1px solid var(--line);background:var(--teal-surface);font-size:19px;line-height:1.55}
 .teams{display:flex;align-items:center;justify-content:space-between;gap:48px;margin-top:56px;padding:38px 0;}
 .teams>div:first-child{max-width:560px}
 .teams h2{margin:9px 0 0;font-size:30px;font-weight:800;line-height:1.12;letter-spacing:-.025em}
@@ -28,4 +24,4 @@
 .note{display:flex;justify-content:space-between;gap:24px;padding-top:28px;color:var(--ink-soft);font-size:13px}
 .note a{color:inherit;text-underline-offset:3px}
 .planAction a:focus-visible,.teamActions a:focus-visible,.note a:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
-@media(max-width:680px){.main{padding:54px 20px 64px}.hero{padding-bottom:38px}.hero h1{font-size:40px}.hero>p:last-child{font-size:17px}.planHeading{align-items:stretch;flex-direction:column;gap:26px;padding:25px 22px}.planAction{min-width:0}.included{padding:24px 22px}.included ul{grid-template-columns:1fr}.teams{align-items:flex-start;flex-direction:column;gap:24px;margin-top:44px}.teamActions{min-width:0}.note{align-items:flex-start;flex-direction:column;gap:9px}}
+@media(max-width:680px){.main{padding:54px 20px 64px}.hero{padding-bottom:38px}.hero h1{font-size:40px}.hero>p:last-child{font-size:17px}.planHeading{align-items:stretch;flex-direction:column;gap:26px;padding:25px 22px}.planAction{min-width:0}.benefit{padding:24px 22px;font-size:17px}.teams{align-items:flex-start;flex-direction:column;gap:24px;margin-top:44px}.teamActions{min-width:0}.note{align-items:flex-start;flex-direction:column;gap:9px}}
