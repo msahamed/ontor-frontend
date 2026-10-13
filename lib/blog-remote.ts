@@ -37,6 +37,8 @@ export async function readBlogObject(key: string, checksum: string, maxBytes = M
   return bytes;
 }
 async function publishedCatalogRows() {
+  // Previews intentionally have no production database access.
+  if (process.env.VERCEL_ENV === "preview" && !process.env.MONGODB_URI) return [];
   // No tighter limit: a cap below the real published count would omit new slugs from listings.
   return (await catalog()).find({ status: "published" }, { projection: { _id: 0 } }).sort({ date: -1, slug: 1 }).limit(10000).toArray();
 }
@@ -51,6 +53,7 @@ export async function loadPublishedDiscoveryPosts(): Promise<PostMeta[]> {
 export const getRemoteCatalog = unstable_cache(loadPublishedCatalog, [BLOG_TAG, "catalog"], { revalidate: 3600, tags: [BLOG_TAG] });
 export const getRemoteRecord = unstable_cache(async (slug: string): Promise<CatalogPost | null> => {
   if (!SLUG.test(slug) || slug.length > 150) return null;
+  if (process.env.VERCEL_ENV === "preview" && !process.env.MONGODB_URI) return null;
   const row = await (await catalog()).findOne({ slug, status: "published" }, { projection: { _id: 0 } });
   return row ? parseCatalogPost(row) : null;
 }, [BLOG_TAG, "record"], { revalidate: 3600, tags: [BLOG_TAG] });
