@@ -15,6 +15,21 @@ function HeroCopy() {
     <h1>Hours at your computer.<RotatingHeroLine /><span className={s.heroHighlight}>Take a smart break!!</span></h1>
     <p>Ontor learns how you interact with your computer to notice changes in your focus and work rhythm, then suggests a short break or simple exercise when it may help</p>
     <HeroDownloadButtons />
+    <a
+      className={s.productHuntBadge}
+      href="https://www.producthunt.com/products/healthos-2?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-ontor-ai"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {/* Product Hunt serves this live badge directly. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        alt="Ontor.ai - Know when to take break before screen affects your health | Product Hunt"
+        width="250"
+        height="54"
+        src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1178520&amp;theme=light&amp;t=1791875032796"
+      />
+    </a>
   </div>;
 }
 
