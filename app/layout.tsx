@@ -110,15 +110,15 @@ const APP_JSONLD = {
   offers: [
     {
       "@type": "Offer",
-      price: "20",
+      price: "10",
       priceCurrency: "USD",
-      description: "$20/month after a 14-day free trial (no card required to start)",
+      description: "$10/month after a 14-day free trial (no card required to start)",
     },
     {
       "@type": "Offer",
-      price: "168",
+      price: "100",
       priceCurrency: "USD",
-      description: "$168/year after a 14-day free trial (about $14/month)",
+      description: "$100/year after a 14-day free trial (about $8.33/month)",
     },
   ],
 };

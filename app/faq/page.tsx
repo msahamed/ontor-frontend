@@ -52,7 +52,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     "q": "What does Ontor cost and where can I use it?",
-    "a": "Ontor is available for Mac and Windows. Start with a 14-day free trial, with no card required. After the trial, choose $20 a month or $168 a year. Team pilots are priced separately."
+    "a": "Ontor is available for Mac and Windows. Start with a 14-day free trial, with no card required. After the trial, choose $10 a month or $100 a year. Team pilots are priced separately."
   }
 ];
 

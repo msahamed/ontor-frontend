@@ -35,7 +35,7 @@ async function buildLlmsTxt(posts: PostMeta[]): Promise<string> {
 - **Desktop session mode (the differentiator):** Press Start in the menu bar and it passively reads your voice across a whole call, producing a timeline of your state minute to minute. It is speaker-gated — when the other person talks, nothing is captured. No bot joins the meeting; it runs beside Zoom / Meet / Teams, not inside them.
 - **Mobile check-in:** A few seconds of unscripted speech gives a quick nervous-system read when you are away from your desk.
 - **Privacy:** All analysis runs on-device; voice audio is not uploaded. Only your own voice is ever analyzed. Self-tracking, not surveillance.
-- **Status:** Live. 14-day free trial (no card required), then $20/month or $168/year.
+- **Status:** Live. 14-day free trial (no card required), then $10/month or $100/year.
 
 ## The eight signals
 
@@ -58,7 +58,7 @@ Salespeople and sales teams (rep-first performance intelligence for people who l
 
 - Founder: Sabber Ahamed (Applied ML Scientist), Dallas, TX.
 - Category: performance intelligence, voice biomarker app, biometric self-tracking.
-- Pricing: 14-day free trial (no card required), then $20/month or $168/year. See https://ontor.ai/pricing/
+- Pricing: 14-day free trial (no card required), then $10/month or $100/year. See https://ontor.ai/pricing/
 - Not a medical device; for self-awareness and general wellness / performance only.
 
 ## Links

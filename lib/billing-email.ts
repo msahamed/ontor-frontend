@@ -115,7 +115,7 @@ export async function sendTrialStarted(to: string, endsAt: Date, days: number) {
         // eleven has spent the whole trial judging the product without
         // knowing what it costs, and then gets a surprise at the worst
         // possible moment.
-        `After that it is $20 a month, or $168 for the year. Nothing happens automatically, because we have no card.`,
+        `After that it is $10 a month, or $100 for the year. Nothing happens automatically, because we have no card.`,
       ],
       footnote: "Questions? Just reply to this email.",
     }),
@@ -126,7 +126,7 @@ export async function sendTrialStarted(to: string, endsAt: Date, days: number) {
       "",
       "Ontor gets better the longer it listens. The first few sessions build your baseline.",
       "",
-      "After that it is $20 a month, or $168 for the year. Nothing happens automatically.",
+      "After that it is $10 a month, or $100 for the year. Nothing happens automatically.",
     ],
   );
 }
@@ -146,7 +146,7 @@ export async function sendTrialEnding(
       paragraphs: [
         `Your trial ends on ${ends}.`,
         `By now Ontor has a baseline for you, which means everything from here is measured against how you actually sound rather than an average of strangers. That is the part that took two weeks to build, and the part you would be starting over on later.`,
-        `$20 a month, or $168 for the year.`,
+        `$10 a month, or $100 for the year.`,
       ],
       cta: { label: "Keep your access", href: PRICING },
       footnote: "If you would rather not continue, do nothing. It stops on its own.",
@@ -156,7 +156,7 @@ export async function sendTrialEnding(
       "",
       `Your trial ends on ${ends}.`,
       "",
-      "$20 a month, or $168 for the year.",
+      "$10 a month, or $100 for the year.",
       PRICING,
     ],
   );
@@ -170,7 +170,7 @@ export async function sendTrialEnded(to: string) {
       heading: "Your trial has ended.",
       paragraphs: [
         `Your readings and your baseline are still here. Nothing has been deleted, and picking up where you left off takes one click.`,
-        `$20 a month, or $168 for the year.`,
+        `$10 a month, or $100 for the year.`,
       ],
       cta: { label: "Continue with Ontor", href: PRICING },
       footnote: "Not for you right now? No hard feelings. Your data stays put.",
@@ -179,7 +179,7 @@ export async function sendTrialEnded(to: string) {
       "Your Ontor trial has ended.",
       "",
       "Your readings and your baseline are still here.",
-      "$20 a month, or $168 for the year.",
+      "$10 a month, or $100 for the year.",
       "",
       PRICING,
     ],

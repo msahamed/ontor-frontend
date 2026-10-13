@@ -48,7 +48,7 @@ export default function Subscribe({ label }: { label: string }) {
         onClick={() => go("monthly")}
         disabled={busy !== null}
       >
-        {busy === "monthly" ? "Opening…" : `${label} · $20/month`}
+        {busy === "monthly" ? "Opening…" : `${label} · $10/month`}
       </button>
       <button
         type="button"
@@ -56,10 +56,10 @@ export default function Subscribe({ label }: { label: string }) {
         onClick={() => go("annual")}
         disabled={busy !== null}
       >
-        {busy === "annual" ? "Opening…" : "$168/year"}
+        {busy === "annual" ? "Opening…" : "$100/year"}
       </button>
       <p style={{ color: "var(--ink-mute)", fontSize: 14, marginTop: 12 }}>
-        Cancel any time. Annual works out at $14 a month.
+        Cancel any time. Annual works out at $8.33 a month.
       </p>
       {error && (
         <p style={{ color: "var(--above)", fontSize: 14, marginTop: 10 }}>{error}</p>

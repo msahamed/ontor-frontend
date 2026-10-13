@@ -6,11 +6,11 @@ import styles from "./pricing.module.css";
 
 export const metadata: Metadata = {
   title: "Pricing — Ontor",
-  description: "Try Ontor free for 14 days, no card required. Then choose $20 a month or $168 a year.",
+  description: "Try Ontor free for 14 days, no card required. Then choose $10 a month or $100 a year.",
   alternates: { canonical: "/pricing/" },
   openGraph: {
     title: "Pricing — Ontor",
-    description: "Try Ontor free for 14 days, no card required. Then choose $20 a month or $168 a year.",
+    description: "Try Ontor free for 14 days, no card required. Then choose $10 a month or $100 a year.",
     url: "https://ontor.ai/pricing/",
   },
 };
@@ -23,15 +23,15 @@ export default function PricingPage() {
         <header className={styles.hero}>
           <p className={styles.label}>Pricing</p>
           <h1>Try Ontor free for 14 days.</h1>
-          <p>Then choose $20 a month or $168 a year. No card required to start.</p>
+          <p>Then choose $10 a month or $100 a year. No card required to start.</p>
         </header>
 
         <section className={styles.individual} aria-labelledby="individual-plan">
           <div className={styles.planHeading}>
             <div>
               <p className={styles.planName}>Individual</p>
-              <h2 id="individual-plan"><strong>$20</strong><span>/month</span></h2>
-              <p className={styles.annual}>Or $168 a year ($14/month). Save about 30%.</p>
+              <h2 id="individual-plan"><strong>$10</strong><span>/month</span></h2>
+              <p className={styles.annual}>Or $100 a year ($8.33/month).</p>
             </div>
             <div className={styles.planAction}>
               <Link href="/login/?next=/dashboard/subscription/">Start 14-day trial</Link>
@@ -39,9 +39,12 @@ export default function PricingPage() {
             </div>
           </div>
 
-          <p className={styles.benefit}>
-            Help you stay focused on your work and finish the day with more energy.
-          </p>
+          <div className={styles.benefit}>
+            <p>Help you stay focused on your work and finish the day with more energy.</p>
+            <p className={styles.benefitSupporting}>
+              Move more to support metabolic health and lower diabetes and heart disease risk.
+            </p>
+          </div>
         </section>
 
         <section className={styles.teams}>
