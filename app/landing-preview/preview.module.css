@@ -7,9 +7,6 @@
 .hero,.todayStory,.supportSection,.close{max-width:1120px;margin:0 auto;padding-left:40px;padding-right:40px}
 .hero{padding-top:64px;padding-bottom:72px}
 .heroCopy{max-width:890px}
-.productHuntBadge{display:block;width:250px;max-width:100%;margin-top:24px;border-radius:10px}
-.productHuntBadge img{display:block;width:100%;height:auto}
-.productHuntBadge:focus-visible{outline:3px solid var(--teal);outline-offset:4px}
 .heroCopy h1{margin:0;max-width:870px;font-size:clamp(38px,4.6vw,64px);font-weight:800;line-height:1.08;letter-spacing:-.035em;text-wrap:balance}
 .heroCopy>p{max-width:740px;color:var(--ink-soft);font-size:19px;line-height:1.65;margin:24px 0 0}
 .hero figure{margin:52px 0 0}
