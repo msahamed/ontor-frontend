@@ -19,3 +19,7 @@
 .pause:focus-visible{outline:2px solid #f59e0b;outline-offset:2px}
 @keyframes speaking{to{transform:scaleY(.35)}}
 @media(prefers-reduced-motion:reduce){.voiceBar,.cue,.panelContents{animation:none}.panelBackground{transition:none}}
+
+.markerDot{transition:cx 1.1s ease-in-out}
+.scene[data-paused=true] .markerDot{transition:none}
+@media(prefers-reduced-motion:reduce){.markerDot{transition:none}}

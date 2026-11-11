@@ -119,3 +119,5 @@
 
 
 .heroHighlight{color:var(--teal);text-decoration:underline;text-decoration-color:var(--teal-surface);text-decoration-thickness:.12em;text-underline-offset:.08em;text-decoration-skip-ink:none}
+
+.liveTopline>span{background:#F59E0B;color:#302719;padding:6px 10px;border-radius:8px;letter-spacing:0}.liveFooter button{background:transparent;color:#d9e5e0;border:1px solid #73938c;font-weight:500}

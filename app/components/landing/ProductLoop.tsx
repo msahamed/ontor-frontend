@@ -11,12 +11,13 @@ const readings = [
   [56,49,54,55,51,54,33], [48,54,47,51,57,48,23],
   [54,76,53,46,52,56,47], [48,52,49,54,56,51,53],
 ];
-const labels=["Energy","Stress","Fatigue","Confidence","Speech clarity","Vocal strain","Breathing"];
+const labels=["Energy","Stress","Fatigue","Focus","Speech clarity","Vocal strain","Hesitation"];
 
 export default function ProductLoop() {
   const clipId=useId();
   const speakerClipId=useId();
-  const [reading,setReading]=useState(0);
+  // Open on a cue moment so the first (and reduced-motion) frame shows the payoff.
+  const [reading,setReading]=useState(1);
   const [paused,setPaused]=useState(false);
   const [reduced,setReduced]=useState(true);
   const [manualExpanded,setManualExpanded]=useState<boolean|null>(null);
@@ -30,7 +31,7 @@ export default function ProductLoop() {
     if(paused||reduced)return;
     const interval=window.setInterval(()=>{
       if(!document.hidden)setReading(value=>(value+1)%readings.length);
-    },1800);
+    },3200);
     return()=>window.clearInterval(interval);
   },[paused,reduced]);
   const expanded=manualExpanded??(reading>=4&&reading<=9);
@@ -60,7 +61,8 @@ export default function ProductLoop() {
       <rect x="1196" y="555" width="196" height="109" rx="9" fill="#f7f7f7"/>
       <rect x="971" y="560" width="35" height="29" fill="#f1f1f1"/>
       {[4,8,13,9,5].map((height,index)=><rect key={index} className={styles.voiceBar} x={979+index*4} y={575-height/2} width="2" height={height} rx="1" fill="#4a9c9d" style={{animationDelay:`${index*-.16}s`}}/>)}
-      <g className={styles.panel}>
+      {/* Scale the live panel up from its bottom-right anchor so it reads at hero size. */}
+      <g className={styles.panel} transform="translate(1388 678) scale(1.3) translate(-1388 -678)">
         <rect className={styles.panelBackground} x={x} y={y} width={width} height={678-y} rx="7" fill="#084f49"/>
         <g key={String(expanded)} className={styles.panelContents}>
           <circle cx={x+14} cy={y+16} r="2.2" fill="#69d9a6"/>
@@ -80,7 +82,7 @@ export default function ProductLoop() {
               <path d={`M${trackX} ${rowY}h${trackWidth}`} stroke="#608e83" strokeWidth="1.5"/>
               <rect x={trackX+trackWidth*.4} y={rowY-4} width={trackWidth*.2} height="8" rx="2" fill="#ffffff13"/>
               <path d={`M${trackX+trackWidth*.5} ${rowY-5}v10`} stroke="#acc8be" strokeWidth=".7"/>
-              <circle cx={trackX+row.value*trackWidth/100} cy={rowY} r="3" fill={warm?"#fbbf24":"#f7faf9"}/>
+              <circle className={styles.markerDot} cx={trackX+row.value*trackWidth/100} cy={rowY} r="3" fill={warm?"#fbbf24":"#f7faf9"}/>
             </g>;
           })}
           {cue&&<g className={styles.cue} aria-label={cue}>

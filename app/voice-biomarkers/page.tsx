@@ -102,9 +102,9 @@ export default function VoiceBiomarkersPage() {
 
         <h2>What Ontor reads from your voice</h2>
         <p>
-          Ontor computes eight signals from a few seconds of unscripted
-          speech: <strong>energy, stress, confidence, fatigue, vocal strain,
-          expressiveness, articulation, and breathing</strong>. Each is a
+          Ontor computes seven voice markers from a few seconds of unscripted
+          speech: <strong>stress, focus, energy, fatigue, vocal strain,
+          speech clarity, and hesitation</strong>. Each is a
           transparent, deterministic formula — a weighted blend of acoustic
           features compared against your roughly 30-day rolling baseline. It is
           not a black-box model guessing a number.

@@ -18,6 +18,10 @@
 .heroFigure .dashboardCapture{max-width:740px;margin:0 auto}
 .heroFigure .today{max-width:780px;margin:0 auto}
 .heroFigure figcaption{text-align:center}
+.callHero{margin-top:40px}
+.callHeroContext{margin:0;color:var(--ink-soft);font-size:16px;line-height:1.5}
+.hero .callHero figure{max-width:1040px;margin:20px auto 0}
+.hero .callHero figcaption{font-size:12px}
 .dashboardCapture{position:relative;overflow:hidden;border:1px solid #e1e3df;border-radius:12px;background:#fff}
 .dashboardAnnotation{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;font-family:inherit}
 .dashboardCapture img{display:block;width:112%;max-width:none;height:auto;margin:-8.5% -6% -1%}
@@ -180,3 +184,17 @@
 .privacyNote{max-width:740px;margin-bottom:40px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .privacyNote p{margin:0 0 10px;font-size:17px;line-height:1.6;color:var(--ink)}
 .privacyNote a{font-size:14px;font-weight:650}
+
+/* Voice-based Today preview, matching the desktop layout. */
+.daySummary{display:flex;justify-content:center;align-items:center;gap:18px;margin:20px 0 14px;flex-wrap:wrap;font-size:13px}
+.daySummary strong{font-size:28px;font-weight:750}.daySummary>span{color:var(--ink-soft)}
+.today .chartBox,.today .activityBox{border:0;padding:0;border-radius:0}
+.activityNumbers{justify-content:space-between;gap:12px;margin:18px 0}.activityNumbers span{font-size:11px}.activityNumbers strong{font-size:20px;margin-top:6px}
+.today h4{margin-top:26px}.todayTitle h3{color:var(--teal)}
+.compactHeader strong{background:#F59E0B;color:#302719;padding:6px 10px;border-radius:8px;letter-spacing:0}
+.compactHeader .end{background:transparent;color:#d9e5e0;font-weight:500;border:1px solid #73938c}
+.compactTrack{height:14px;border-radius:9px;background:#47776d}.compactTrack i{top:0;height:14px;border-radius:9px}.compactTrack b{top:2px;width:10px;height:10px}
+.liveCue svg{animation:exhale 8s ease-in-out infinite;transform-origin:left center}
+@keyframes exhale{0%,25%,100%{transform:scaleX(.75);opacity:.6}75%{transform:scaleX(1.25);opacity:1}}
+@media(prefers-reduced-motion:reduce){.liveCue svg{animation:none}}
+@media(max-width:480px){.activityNumbers span{font-size:9px}.activityNumbers strong{font-size:15px}.todayBody{padding:16px}.heroFigure{padding:12px}.daySummary{gap:12px}}

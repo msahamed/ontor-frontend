@@ -7,7 +7,7 @@ import teams from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "Ontor for teams",
-  description: "Help people understand their workday with personal voice readings, work rhythm, and timely breaks. Explore aggregate insights in a team pilot.",
+  description: "Support your team during demanding calls with private voice feedback and in-the-moment cues. Explore guided resets and aggregate insights in a pilot.",
 };
 
 export default function ForTeamsPage() {
@@ -17,9 +17,9 @@ export default function ForTeamsPage() {
       <main className={`${styles.main} ${teams.main}`}>
         <section className={styles.hero}>
           <p className={styles.eyebrow}>Ontor for teams</p>
-          <h1>Help your team find time to reset.</h1>
+          <h1>Support your team during demanding conversations.</h1>
           <p className={styles.lede}>
-            Give each person a view of their voice readings and work rhythm, with short resets and break reminders during the day. Explore aggregate patterns together in a team pilot.
+            Give each person real-time voice feedback and cues they can use while speaking. Guided resets and aggregate patterns offer context between calls.
           </p>
           <div className={styles.actions}>
             <a className={styles.primaryButton} href="https://calendly.com/sabber-ahamed/30min" target="_blank" rel="noreferrer">Discuss a team pilot</a>
@@ -29,9 +29,9 @@ export default function ForTeamsPage() {
 
         <section className={styles.section}>
           <div className={styles.sectionCopy}>
-            <p className={styles.eyebrow}>A clearer view of the buildup</p>
-            <h2>Make workload and recovery part of the conversation.</h2>
-            <p>Group patterns can give a team a reason to discuss meeting pressure, long work stretches, and opportunities to pause. Use a pilot to understand what is useful for your team.</p>
+            <p className={styles.eyebrow}>Context across calls</p>
+            <h2>Use shared patterns to guide team support.</h2>
+            <p>Aggregate voice patterns can help a team discuss demanding call blocks, coaching needs, and time between conversations. Use a pilot to learn whether this context helps your team.</p>
           </div>
           <div className={styles.teamDashboard} aria-label="Illustrative aggregate team overview">
             <div className={styles.dashboardHead}>
@@ -71,7 +71,7 @@ export default function ForTeamsPage() {
                 <div className={styles.signalRow}><span>Stress</span><strong className={styles.attention}>Above usual more often</strong></div>
                 <div className={styles.signalRow}><span>Energy</span><strong>Near the usual range</strong></div>
                 <div className={styles.signalRow}><span>After resets</span><strong className={styles.positive}>Moving toward usual</strong></div>
-                <p className={styles.dashboardNote}>A reason to look at workload and support before the outcome shows up.</p>
+                <p className={styles.dashboardNote}>Example patterns to discuss alongside call schedules and team feedback.</p>
               </div>
             </div>
             <div className={styles.dashboardPrivacy}><span aria-hidden="true">●</span> Group patterns only. Individual sessions and readings stay personal.</div>
@@ -82,12 +82,12 @@ export default function ForTeamsPage() {
           <div className={styles.sectionCopy}>
             <p className={styles.eyebrow}>Personal help, team-level context</p>
             <h2>The individual experience stays personal.</h2>
-            <p>Each person gets practical feedback throughout the workday, including time between calls.</p>
+            <p>Each person can see live voice feedback during a call and choose whether to use a cue.</p>
           </div>
           <div className={styles.ownershipPanel}>
             <div className={styles.ownershipRow}>
               <strong>Each person sees</strong>
-              <p>Their Today view, voice readings, work rhythm, work stretches, and suggested breaks. They can snooze a reminder or say whether they feel tired.</p>
+              <p>Their live voice readings, in-call cues, session history, and guided resets. Daily trends and activity timing provide additional context.</p>
             </div>
             <div className={styles.ownershipRow}>
               <strong>Team leaders see</strong>
@@ -105,8 +105,8 @@ export default function ForTeamsPage() {
             <article className={styles.useCase}>
               <div className={styles.useCaseCopy}>
                 <span>Sales teams</span>
-                <h3>Help strong representatives stay steady through demanding conversations.</h3>
-                <p>A representative can see when stress rises, focus shifts, or vocal strain builds. Ontor can suggest a reset before the next conversation, while leaders use aggregate patterns to improve coaching and workload decisions.</p>
+                <h3>Support reps during prospect and customer calls.</h3>
+                <p>A representative can notice changes in voice markers while speaking and use a discreet cue during the call. Pilot measures could include repeat use, qualified meetings, and conversion.</p>
               </div>
               <div className={styles.conversationVisual} aria-label="Illustration of strain building across several conversations">
                 {[44,55,48,67,78,72].map((height,index)=><div key={index}><i style={{height}}/><span>{index===0?"Earlier":index===5?"Later":""}</span></div>)}
@@ -115,9 +115,9 @@ export default function ForTeamsPage() {
 
             <article className={styles.useCase}>
               <div className={styles.useCaseCopy}>
-                <span>Workplace teams</span>
-                <h3>Help people notice long stretches without a break.</h3>
-                <p>Each person can see how long they have worked and how their work rhythm compares with their usual range. Break reminders offer a moment to pause, including on days with few calls.</p>
+                <span>Customer support</span>
+                <h3>Offer a cue during a difficult customer conversation.</h3>
+                <p>Live voice feedback stays nearby while an agent handles an issue. A pilot can evaluate whether agents find the cues useful alongside first-contact resolution and customer satisfaction.</p>
               </div>
               <div className={styles.workweekVisual} aria-label="Illustration of aggregate team patterns across a workweek">
                 {["Mon","Tue","Wed","Thu","Fri"].map(day=><div className={styles.workday} key={day}><span/><span/><span/><small>{day}</small></div>)}
@@ -126,19 +126,19 @@ export default function ForTeamsPage() {
 
             <article className={styles.useCase}>
               <div className={styles.useCaseCopy}>
-                <span>Spas and medical spas</span>
-                <h3>Give customers a before-and-after experience they can see.</h3>
-                <p>A short voice check-in before and after a service can show how the customer&apos;s signals changed. Providers can use that context to personalize the experience and make the result easier to understand.</p>
+                <span>Collections</span>
+                <h3>Make room to reset between demanding payment calls.</h3>
+                <p>Private cues offer an action during the conversation. Between calls, a guided reset and another voice check-in let the person compare readings. A pilot can examine usefulness alongside promises to pay and payment recovery.</p>
               </div>
-              <div className={styles.spaCompare} aria-label="Illustrative before-and-after customer check-in">
+              <div className={styles.spaCompare} aria-label="Illustrative voice check-ins around a guided reset">
                 <div className={styles.spaState}>
-                  <span>Before</span>
+                  <span>Before reset</span>
                   <div className={styles.spaMetric}><b>Stress</b><i/></div>
                   <div className={styles.spaMetric}><b>Energy</b><i/></div>
                 </div>
                 <i className={styles.spaArrow} aria-hidden="true">→</i>
                 <div className={styles.spaState}>
-                  <span>After</span>
+                  <span>After reset</span>
                   <div className={styles.spaMetric}><b>Stress</b><i/></div>
                   <div className={styles.spaMetric}><b>Energy</b><i/></div>
                 </div>
@@ -149,7 +149,7 @@ export default function ForTeamsPage() {
 
         <section className={styles.cta}>
           <h2>Start with a focused pilot.</h2>
-          <p>Choose one team or customer journey, decide what you want to learn, and measure the experience before expanding.</p>
+          <p>Choose one call-intensive team, agree a success measure, and evaluate useful cues, repeat use, and business outcomes before expanding.</p>
           <div className={styles.actions}>
             <a className={styles.primaryButton} href="https://calendly.com/sabber-ahamed/30min" target="_blank" rel="noreferrer">Discuss a team pilot</a>
           </div>

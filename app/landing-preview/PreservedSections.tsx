@@ -22,9 +22,8 @@ export default function PreservedSections({ calm = false }: { calm?: boolean }) 
           <div className={calm ? `${preview.visualStage} ${preview.liveStage}` : undefined}>
           <div className={styles.livePanel} aria-label="Example of Ontor reading voice signals while someone speaks">
             <div className={styles.liveTopline}>
-              <span>Listening</span>
+              <span>Listening Live</span>
               <time>0:32</time>
-              <i aria-hidden="true" />
             </div>
             <h3>Ontor is listening.</h3>
             <p className={styles.liveIntro}>Markers refresh with each 10-second voice window.</p>

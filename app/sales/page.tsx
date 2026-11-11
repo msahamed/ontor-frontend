@@ -4,33 +4,35 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import styles from "../marketing-pages.module.css";
 import salesStyles from "./sales.module.css";
+import { CompactPreview } from "../landing-preview/ProductPreviews";
+import { SOCIAL_IMAGE } from "../site-metadata";
 
 const PILOT_URL = "https://calendly.com/sabber-ahamed/30min";
 
 export const metadata: Metadata = {
-  title: "Ontor for sales teams | Help reps recover between calls",
+  title: "Ontor for sales teams | Real-time voice feedback during calls",
   description:
-    "Ontor gives reps a private way to notice and recover from pressure during the workday. Managers see aggregate team patterns only.",
+    "Give reps private voice feedback and cues during demanding sales calls, with guided resets afterward and aggregate context for team pilots.",
   alternates: { canonical: "/sales" },
   openGraph: {
     title: "Ontor for sales teams",
     description:
-      "Help reps recover between calls and give managers an earlier view of changes across the team.",
+      "Support reps during demanding sales calls with private voice feedback, in-call cues, and guided resets afterward.",
     url: "https://ontor.ai/sales",
     images: [
       {
-        url: "/og.png?v=2",
+        url: SOCIAL_IMAGE.url,
         width: 1200,
         height: 630,
-        alt: "Ontor detects shifts and helps you reset.",
+        alt: "Ontor: Real-time voice feedback while you speak",
       },
     ],
   },
   twitter: {
     title: "Ontor for sales teams",
     description:
-      "Help reps recover between calls and give managers an earlier view of changes across the team.",
-    images: ["/og.png?v=2"],
+      "Support reps during demanding sales calls with private voice feedback, in-call cues, and guided resets afterward.",
+    images: [SOCIAL_IMAGE.url],
   },
 };
 
@@ -61,11 +63,11 @@ export default function SalesPage() {
       <Nav />
       <main className={salesStyles.main}>
         <section className={salesStyles.hero}>
-          <h1>Ontor helps retain top reps and reduce high turnover.</h1>
+          <h1>Private voice feedback for demanding sales calls.</h1>
           <p>
-            Ontor helps identify when your sales reps get fatigued and helps
-            them recover to peak performance by providing near-real-time
-            feedback about their state.
+            Ontor shows reps changes in their voice while they speak, with private
+            cues when a reset may help. Review the session or try a guided
+            exercise afterward.
           </p>
           <a className={styles.primaryButton} href={PILOT_URL} target="_blank" rel="noreferrer">
             Talk through a sales-team pilot
@@ -74,13 +76,17 @@ export default function SalesPage() {
 
         <section className={salesStyles.productSection}>
           <div className={salesStyles.sectionCopy}>
-            <h2>The rep gets something useful during the workday.</h2>
+            <h2>A private cue while the conversation is happening.</h2>
             <p>
-              Ontor compares each call with that rep&rsquo;s usual range. If pressure
-              lasts through the call, it suggests a short exercise before the
-              next one. The rep can speak again afterward and see whether the
-              reading changed.
+              Ontor compares voice readings with the rep&rsquo;s usual range. A
+              discreet cue suggests an action they can take while speaking.
+              Between calls, they can try a guided reset and compare readings
+              before and afterward.
             </p>
+          </div>
+          <div style={{ maxWidth: 520, margin: "0 auto 32px" }}>
+            <CompactPreview />
+            <p style={{ fontSize: 12, color: "var(--ink-soft)", marginTop: 12 }}>Illustrative live feedback, not measured results.</p>
           </div>
           <figure className={salesStyles.productShot}>
             <Image
@@ -145,34 +151,33 @@ export default function SalesPage() {
 
         <section className={salesStyles.turnoverSection}>
           <div className={salesStyles.sectionCopy}>
-            <h2>A resignation creates costs that headcount does not show.</h2>
+            <h2>Demanding calls leave little room for missed details.</h2>
             <p>
-              Accounts need coverage. The manager spends time hiring instead of
-              coaching. A replacement can fill the seat before they replace the
-              previous rep&rsquo;s output.
+              A rushed response or missed question can make a customer conversation
+              harder. We are testing whether timely voice feedback helps reps
+              recognize a change and respond during the call.
             </p>
           </div>
-          <div className={salesStyles.turnoverPath} aria-label="Operational effects after a productive sales representative leaves">
-            <div><span>Rep leaves</span><strong>Customer and pipeline context leaves with them</strong></div>
-            <div><span>Territory is open</span><strong>The rest of the team absorbs the work</strong></div>
-            <div><span>Manager hires</span><strong>Coaching time moves to recruiting and onboarding</strong></div>
-            <div><span>Replacement ramps</span><strong>Payroll returns before full sales output</strong></div>
+          <div className={salesStyles.turnoverPath} aria-label="Proposed use of Ontor during and after a sales call">
+            <div><span>During a call</span><strong>See voice markers against your usual range</strong></div>
+            <div><span>A reading shifts</span><strong>Consider a discreet cue while you speak</strong></div>
+            <div><span>Between calls</span><strong>Try a guided reset when it may help</strong></div>
+            <div><span>Afterward</span><strong>Review the session and compare readings</strong></div>
           </div>
           <p className={salesStyles.limitNote}>
-            Ontor cannot tell a manager which rep will leave. It can show when a
-            team&rsquo;s usual pattern has changed, giving the manager a reason to
-            check workload, coaching, and support before the exit interview.
+            Voice readings provide context for the rep. They do not establish
+            call quality or predict whether a deal will close. Business impact
+            needs to be evaluated in pilots.
           </p>
         </section>
 
         <section className={salesStyles.pilotSection}>
           <h2>Test it against the numbers you already use.</h2>
           <p>
-            Start with one SDR team. Establish its usual pattern, introduce the
-            private resets, then compare the aggregate changes with late-day call
-            consistency, attainment, absence, and turnover. We have not proved a
-            retention lift yet. The pilot is how we find out whether this helps a
-            manager act sooner.
+            Start with one sales team and an agreed success measure. Evaluate
+            whether reps find the live cues useful and keep using them, then
+            examine qualified meetings or conversion alongside that usage.
+            Improvements in sales outcomes have not yet been established.
           </p>
           <a className={styles.primaryButton} href={PILOT_URL} target="_blank" rel="noreferrer">
             Talk through the pilot
