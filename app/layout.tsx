@@ -73,7 +73,7 @@ const ORG_JSONLD = {
   url: "https://ontor.ai",
   logo: "https://ontor.ai/og.png",
   description:
-    "Ontor builds voice-first, on-device performance-intelligence technology that reads nervous-system state from how you sound.",
+    "Ontor builds voice-first, on-device performance-intelligence technology that shows changes in voice patterns during calls.",
   founder: { "@type": "Person", name: "Sabber Ahamed" },
   foundingLocation: "Dallas, TX",
   sameAs: [
@@ -101,10 +101,10 @@ const APP_JSONLD = {
   url: "https://ontor.ai",
   description: DESCRIPTION,
   featureList: [
-    "Desktop menu-bar tool reads your nervous-system state across a live call, in real time",
-    "Speaker-gated — only your own voice is analyzed, never the other person on the call",
-    "Eight nervous-system signals: energy, stress, confidence, fatigue, vocal strain, expressiveness, articulation, breathing",
-    "Voice is analyzed on your device by default; nothing is uploaded unless you turn on optional sync",
+    "Desktop tool shows voice markers during calls in real time",
+    "Voice recognition helps select your speech for analysis",
+    "Seven voice markers: stress, focus, energy, fatigue, vocal strain, speech clarity, hesitation",
+    "Voice analysis runs on-device; cloud backup is optional",
     "Quick voice check-in on mobile, with pattern detection over your personal baseline",
   ],
   offers: [

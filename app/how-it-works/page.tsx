@@ -5,8 +5,9 @@ import Footer from "../components/Footer";
 import styles from "../marketing-pages.module.css";
 import how from "./page.module.css";
 import WorkdayDemo from "./WorkdayDemo";
+import { CompactPreview } from "../landing-preview/ProductPreviews";
 
-const description = "How Ontor uses your voice and everyday computer interactions to show changes from your usual patterns and suggest useful breaks.";
+const description = "See how Ontor provides live voice feedback during calls, suggests in-call cues, and lets you review readings or try a guided reset afterward.";
 
 export const metadata: Metadata = {
   title: "How Ontor works",
@@ -32,38 +33,34 @@ export default function HowItWorksPage() {
       <main className={`${styles.main} ${how.main}`}>
         <section className={styles.hero}>
           <p className={styles.eyebrow}>How Ontor works</p>
-          <h1>Understand your patterns while you work.</h1>
+          <h1>Voice feedback while the conversation is happening.</h1>
           <p className={styles.lede}>
-            Your voice and the way you interact with your computer offer different views of your day.
-            Ontor makes changes in those patterns visible, compares them with what is usual for you,
-            and suggests a break or reset when one may help.
+            Ontor analyzes your voice during calls, compares readings with your own history, and offers small cues you can use in the conversation. Afterward, review your day or try a guided reset.
           </p>
-          <div className={how.overview} aria-label="Two sources of readings in Ontor">
-            <div><strong>While you speak</strong><p>Voice patterns → voice readings</p></div>
-            <div><strong>While you use your computer</strong><p>Activity and pauses → work rhythm</p></div>
-            <p className={how.overviewNote}>See both in Today, with your own history as the reference.</p>
+          <div className={how.overview} aria-label="During and after a call">
+            <div><strong>During your call</strong><p>See live voice feedback and a cue when one may help.</p></div>
+            <div><strong>Afterward</strong><p>Review the session or try a guided reset.</p></div>
+            <p className={how.overviewNote}>Readings are compared with your own history. You choose whether to act on a cue.</p>
           </div>
         </section>
 
         <section className={styles.section}>
           <div className={styles.sectionCopy}>
-            <h2>Everyday interactions give you something to work with.</h2>
-            <p>Ontor runs on your desktop as you go about your day. You can open your readings when you want a closer look.</p>
+            <h2>Start your call with Ontor nearby.</h2>
+            <p>On desktop, a voice session can start automatically when your microphone is in use. You can also start one manually. Its status appears in the menu bar or system tray.</p>
           </div>
           <div className={styles.ownershipPanel}>
-            <div className={styles.ownershipRow}>
-              <strong>Your voice</strong>
-              <p>During a voice session, Ontor uses how your speech sounds to estimate signals such as stress, focus, and energy. Your voice samples help it recognize your speech. On desktop, sessions can start automatically when your microphone is in use, with status in the menu bar or system tray.</p>
-            </div>
-            <div className={styles.ownershipRow}>
-              <strong>Your work rhythm</strong>
-              <p>Basic information about typing, clicking, scrolling, and pauses helps describe the pace of your computer interactions. Ontor also shows how long you have worked without a break. It does not save what you type, which keys you press, or what you click on.</p>
-            </div>
-            <div className={styles.ownershipRow}>
-              <strong>Days with few calls</strong>
-              <p>Work rhythm and break reminders still work when there are no voice readings. Voice readings appear when you speak during a session; you do not need to record a check-in just to see your computer activity.</p>
-            </div>
+            <div className={styles.ownershipRow}><strong>Your speech</strong><p>Ontor uses how your speech sounds to estimate signals such as stress, focus, and energy. Your voice samples help it recognize your speech.</p></div>
+            <div className={styles.ownershipRow}><strong>Your live view</strong><p>Open the compact panel beside your call to see readings as you speak, or keep it closed and review the session later.</p></div>
           </div>
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.sectionCopy}>
+            <h2>Notice a change while you speak.</h2>
+            <p>Voice readings refresh after each 10 seconds of speech. When a reading moves outside your usual range, a small cue can suggest an action during the conversation, such as gently lengthening your next exhale.</p>
+          </div>
+          <div className={how.liveDemo}><CompactPreview /><p>Illustrative live feedback, not measured results.</p></div>
         </section>
 
         <section className={styles.section}>
@@ -80,44 +77,42 @@ export default function HowItWorksPage() {
               <span className={how.rangePoint} />
             </div>
             <div className={how.rangeLabels}><span>Lower than usual</span><span>Your usual range</span><span>Higher than usual</span></div>
-            <p>A change is a reason to check in with yourself. Slower computer interactions can also reflect reading, thinking, or a different task.</p>
+            <p>A change is a reason to check in with yourself. A voice reading may not match how you feel.</p>
           </div>
         </section>
 
         <section className={styles.section}>
           <div className={styles.sectionCopy}>
-            <h2>Open Today to see how your day is going.</h2>
-            <p>Today brings your available readings together. You can review a change in your voice, look at your work rhythm, or simply see how long your current work stretch has lasted.</p>
+            <h2>Take a moment before the next conversation.</h2>
+            <p>Choose a guided reset when it suits you. Voice check-ins before and afterward let you compare readings and see what changed.</p>
+          </div>
+          <div className={styles.ownershipPanel}>
+            <div className={styles.ownershipRow}><strong>Try a reset</strong><p>A short guided breathing exercise gives you an action to try between calls. You decide when to start.</p></div>
+            <div className={styles.ownershipRow}><strong>Compare readings</strong><p>A change in your voice readings is context to consider alongside how you feel. It does not establish that an exercise caused the change.</p></div>
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <div className={styles.sectionCopy}>
+            <h2>Review your calls in the context of your day.</h2>
+            <p>Choose a voice marker in Today to see its daily trend against your usual range. Open a past session for more detail.</p>
           </div>
           <WorkdayDemo />
-          <div className={styles.ownershipPanel}>
-            <div className={styles.ownershipRow}><strong>Voice readings</strong><p>Follow each signal through the day and compare it with your usual range. Open a past session when you want more detail.</p></div>
-            <div className={styles.ownershipRow}><strong>Time at your computer</strong><p>See your total activity today, longest uninterrupted stretch, and current stretch.</p></div>
-            <div className={styles.ownershipRow}><strong>Work rhythm</strong><p>See when your pace is higher or lower than usual. This chart is currently labeled Interaction pace in the desktop product.</p></div>
-          </div>
           <details className={how.markerDetails}>
             <summary>What do the seven voice signals mean?</summary>
             <p>These are estimates from your voice. They provide context for your own experience and do not diagnose a health condition.</p>
             <dl>{markers.map(([name, meaning]) => <div key={name}><dt>{name}</dt><dd>{meaning}</dd></div>)}</dl>
           </details>
-        </section>
-
-        <section className={styles.section}>
-          <div className={styles.sectionCopy}>
-            <h2>A reminder gives you a next step.</h2>
-            <p>For computer work, Ontor considers time without a break and whether your work rhythm has stayed below your usual level. A long uninterrupted stretch can also prompt a reminder. Voice sessions can suggest a short reset based on changes in your voice.</p>
-          </div>
-          <div className={styles.ownershipPanel}>
-            <div className={styles.ownershipRow}><strong>Take a short break</strong><p>A desktop reminder can suggest a simple action, such as taking a five-minute break. You can move it, snooze it, or dismiss it.</p></div>
-            <div className={styles.ownershipRow}><strong>Tell Ontor how you feel</strong><p>Answer “Are you feeling tired?” with Yes or No when you want to. Your answer helps personalize future work-rhythm readings as enough feedback becomes available.</p></div>
-            <div className={styles.ownershipRow}><strong>See what helps</strong><p>Try a guided reset when it suits you. A voice check-in before and afterward lets you compare your readings.</p></div>
-          </div>
-          <p className={how.note}>You can feel well during a long work stretch. Your feedback matters even when it disagrees with a reminder.</p>
+          <details className={how.markerDetails}>
+            <summary>What about computer activity and break reminders?</summary>
+            <p>Today also shows total activity time, your longest uninterrupted work stretch, and your current stretch. Basic activity counts and pauses provide timing context. Ontor does not save typed text, key identities, or click targets.</p>
+            <p>A long work stretch can prompt a break reminder even on days with few calls. You can move, snooze, or dismiss it. Activity timing does not infer tiredness, and it does not require microphone permission or Accessibility access.</p>
+          </details>
         </section>
 
         <section className={styles.cta}>
-          <h2>Start with your next workday.</h2>
-          <p>Available for Mac and Windows. Voice analysis needs microphone permission; basic computer activity does not need Accessibility access. Cloud backup is optional.</p>
+          <h2>Try it during your next call.</h2>
+          <p>Available for Mac and Windows. Allow microphone access for voice analysis, then start a session. Analysis runs on-device; cloud backup is optional.</p>
           <div className={styles.actions}>
             <Link className={styles.primaryButton} href="/install">Try Ontor free</Link>
             <Link className={styles.secondaryButton} href="/privacy">How your data is used</Link>

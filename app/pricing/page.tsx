@@ -40,9 +40,9 @@ export default function PricingPage() {
           </div>
 
           <div className={styles.benefit}>
-            <p>Help you stay focused on your work and finish the day with more energy.</p>
+            <p>Real-time voice feedback for your everyday calls.</p>
             <p className={styles.benefitSupporting}>
-              Move more to support metabolic health and lower diabetes and heart disease risk.
+              See changes from your usual range, get cues during conversations, and try guided resets afterward.
             </p>
           </div>
         </section>

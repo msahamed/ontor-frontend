@@ -24,42 +24,30 @@ function postLinks(posts: PostMeta[]): string {
 async function buildLlmsTxt(posts: PostMeta[]): Promise<string> {
   return `# Ontor
 
-> Ontor is performance intelligence from your voice. A desktop app that sits in your menu bar reads your nervous-system state — stress, energy, confidence, fatigue and more — from *how you sound* across real calls and meetings, in real time. It is speaker-gated: only your own voice is analyzed, never the other person's. There is also a few-second voice check-in on mobile. Everything runs on-device.
+Ontor provides private, real-time voice feedback during calls. Voice analysis runs on-device. Cloud backup is optional.
 
-## What it is
+## Product
 
-- **Product:** Ontor — performance intelligence from your voice (a voice-biomarker app).
-- **Website:** ${BASE_URL}
-- **Platforms:** macOS, Windows, iOS, and Android — one engine and the same personal baseline everywhere.
-- **Core idea:** Every sales/productivity tool measures what you *did* (calls, pipeline, activity). Nothing measures *how you are holding up* while you do it. Ontor reads that from how your own voice sounds, so a dip shows up before it costs you the outcome.
-- **Desktop session mode (the differentiator):** Press Start in the menu bar and it passively reads your voice across a whole call, producing a timeline of your state minute to minute. It is speaker-gated — when the other person talks, nothing is captured. No bot joins the meeting; it runs beside Zoom / Meet / Teams, not inside them.
-- **Mobile check-in:** A few seconds of unscripted speech gives a quick nervous-system read when you are away from your desk.
-- **Privacy:** All analysis runs on-device; voice audio is not uploaded. Only your own voice is ever analyzed. Self-tracking, not surveillance.
-- **Status:** Live. 14-day free trial (no card required), then $10/month or $100/year.
+Ontor is a wellness and performance intelligence tool for call-intensive professionals, including sales, collections, and customer support. Desktop sessions can start when the microphone is in use, or manually. Voice recognition helps select the user's speech, but recognition can be imperfect.
 
-## The eight signals
+## Seven voice markers
 
-Energy, Stress, Confidence, Fatigue, Vocal Strain, Expressiveness, Articulation, and Breathing. Each is a transparent, literature-grounded formula scored against the user's own ~30-day rolling baseline (a relative "higher/lower than your usual" read, not a clinical or population score).
+Stress, Focus, Energy, Fatigue, Vocal strain, Speech clarity, and Hesitation. Readings are compared with personal history. Fatigue is a voice marker; computer activity is used for timing and work stretches, not tiredness inference.
 
-## How it works
+## Experience
 
-Each signal is a deterministic, peer-reviewed-literature-grounded blend of acoustic features (pitch, loudness, pace, pauses, vocal clarity) compared to the user's personal baseline. It is not a black-box model. The read is relative and for self-awareness — it does not diagnose or treat, and makes no clinical claims (positioned as a general wellness / performance tool).
+During a call, private cues can suggest a small action. Afterward, users can review session history or try a guided reset. Today shows activity time, work stretches, and voice-marker trends.
 
-## How it is different
+## Privacy
 
-- **vs. wearables (Oura, WHOOP, Apple Watch):** Wearables track physiology — heart rate, HRV, sleep — and infer stress. Ontor reads psychological and nervous-system state (confidence, vocal strain, expressiveness) a wrist sensor cannot detect. No hardware to wear; it complements a wearable rather than replacing it. "Wearables read your body. Your voice reveals your mind."
-- **vs. call-recording / conversation-intelligence tools (Gong, Chorus):** Those record *what was said* and are sold to the manager. Ontor reads *how the rep sounds*, is rep-first and speaker-gated, and never captures the other side of the call. Different layer, different buyer.
-
-## Who it is for
-
-Salespeople and sales teams (rep-first performance intelligence for people who live on calls); founders and other performance-minded professionals; coaches who want an objective read on how clients are doing between sessions; and biohackers/self-trackers who want the "mind" layer their wearable cannot read.
+Analysis runs on-device. Optional sync can upload history and check-in recordings. Product usage and reliability reporting is separate from sync. See the privacy policy for details.
 
 ## Key facts
 
-- Founder: Sabber Ahamed (Applied ML Scientist), Dallas, TX.
-- Category: performance intelligence, voice biomarker app, biometric self-tracking.
-- Pricing: 14-day free trial (no card required), then $10/month or $100/year. See https://ontor.ai/pricing/
-- Not a medical device; for self-awareness and general wellness / performance only.
+- Desktop: Mac and Windows. Mobile voice check-ins are also supported.
+- Founder: Sabber Ahamed, Dallas, TX.
+- Pricing: 14-day free trial, then $10/month or $100/year. Team pilots are priced separately.
+- Ontor does not diagnose or treat health conditions.
 
 ## Links
 

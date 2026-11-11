@@ -8,47 +8,47 @@ import type { Metadata } from "next";
 const FAQ: { q: string; a: string }[] = [
   {
     "q": "What is Ontor?",
-    "a": "Ontor helps you understand how your workday is going. It shows changes in your voice and work rhythm compared with what is usual for you, and suggests a short reset or break when one may help."
-  },
-  {
-    "q": "What can I see in Today?",
-    "a": "Today brings together your voice readings, time spent at your computer, longest work stretch, current stretch, and work rhythm. You can see how your day has changed and compare readings with your usual range."
-  },
-  {
-    "q": "What does work rhythm mean?",
-    "a": "Work rhythm describes the pace of your interactions with your computer, using basic activity counts and timing. It appears as Interaction pace in the desktop product. A lower reading means a slower pace compared with your usual pattern. It does not by itself mean you are tired."
-  },
-  {
-    "q": "Does Ontor help when I am not speaking?",
-    "a": "Yes. On desktop, your work rhythm and time without a break can inform break reminders even when there are no voice readings. Voice readings appear when you speak during a session."
+    "a": "Ontor provides private, real-time voice feedback while you speak. It compares voice markers with your usual range and offers cues during demanding conversations. Afterward, you can review the session or try a guided reset."
   },
   {
     "q": "Do I have to start every voice session?",
-    "a": "On desktop, Ontor can start a voice session automatically when your microphone is in use. Automatic sessions stay in the menu bar, and you can open the live view when you want to see your readings. You can also start a session manually. Microphone permission is required for voice analysis."
+    "a": "On desktop, Ontor can start a voice session automatically when your microphone is in use. You can open the live view or start a session manually. Microphone permission is required."
   },
   {
-    "q": "What voice signals can I see?",
-    "a": "Stress, Focus, Energy, Fatigue, Vocal strain, Speech clarity, and Hesitation. These are estimates based on patterns in your voice, compared with your personal reference. They are not a diagnosis or a direct measure of how you feel."
+    "q": "What voice markers can I see?",
+    "a": "Stress, Focus, Energy, Fatigue, Vocal strain, Speech clarity, and Hesitation. These are voice-based estimates compared with your personal reference. They are not a diagnosis or a direct measure of how you feel."
   },
   {
-    "q": "Why does Ontor suggest a break?",
-    "a": "Ontor considers how long you have worked without a break and whether your work rhythm has stayed below your usual level. A long uninterrupted stretch can also prompt a reminder. You can snooze or dismiss it, and answer “Are you feeling tired?” to help personalize future readings."
+    "q": "Why does Ontor suggest a reset or break?",
+    "a": "Changes in voice markers can prompt a small cue during a call or a suggested reset. A long uninterrupted computer-work stretch can also prompt a break reminder. You choose whether to act on it."
+  },
+  {
+    "q": "What can I see in Today?",
+    "a": "Your total activity time, longest work stretch, current stretch, and a combined computer-and-voice timeline. Select a voice marker to see its daily score, direction, and readings against your usual range."
+  },
+  {
+    "q": "Does Ontor analyze my state from typing or mouse movements?",
+    "a": "No. Voice markers come from your speech. Basic computer activity provides timing and work-stretch context, and can support long-stretch break reminders."
+  },
+  {
+    "q": "What does Fatigue mean here?",
+    "a": "Fatigue is a voice marker based on speech patterns. It is separate from computer activity timing. Ontor does not infer tiredness from your typing or mouse activity."
   },
   {
     "q": "What information does Ontor use from my computer?",
-    "a": "While Ontor is running, it uses basic information such as how often you type, click, or scroll, and the timing of activity and pauses. This helps show your work rhythm and suggest breaks. It does not save what you type, which keys you press, or what you click on. Desktop activity does not require Accessibility access."
+    "a": "Ontor uses basic activity counts and timing to show activity periods and work stretches. It does not save typed text, key identities, or click targets. Basic activity does not require Accessibility access."
   },
   {
     "q": "What is saved or synced?",
-    "a": "Your readings, activity summaries, and feedback are saved on your device. If you turn on cloud sync, Ontor also backs up your history, check-in recordings, and information used to personalize your readings. Product usage and reliability data are handled separately, as explained in the privacy policy."
+    "a": "Readings and activity history are saved on your device. Optional cloud sync backs up supported history and check-in recordings. Usage and reliability data are handled separately, as explained in the privacy policy."
   },
   {
     "q": "Can my team see my personal readings?",
-    "a": "Personal sessions and individual readings stay with you. Team views show aggregate patterns for discussions about workload and support. Contact us to discuss what is included in a team pilot."
+    "a": "Team pilots focus on aggregate patterns. Individual sharing is controlled separately. Contact us to discuss access and sharing for your pilot."
   },
   {
     "q": "Is Ontor a medical device?",
-    "a": "No. Ontor is a general wellness and performance tool. It does not diagnose or treat health conditions. Your own experience matters, and a reading or reminder may not match how you feel."
+    "a": "No. Ontor is a wellness and performance tool. It does not diagnose or treat health conditions. Your own experience matters, and a reading or reminder may not match how you feel."
   },
   {
     "q": "What does Ontor cost and where can I use it?",
@@ -67,7 +67,7 @@ const FAQ_JSONLD = {
 };
 
 const PAGE_DESCRIPTION =
-  "Answers about Ontor for Mac and Windows: voice readings, work rhythm, break reminders, privacy, and pricing.";
+  "Answers about live voice feedback, call sessions, guided resets, privacy, and pricing for Ontor on Mac and Windows.";
 
 export const metadata: Metadata = {
   title: "FAQ — Ontor",
@@ -81,10 +81,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.png",
+        url: "/og-voice.png",
         width: 1200,
         height: 630,
-        alt: "Ontor voice readings and work rhythm",
+        alt: "Ontor: Real-time voice feedback while you speak",
       },
     ],
   },
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Frequently Asked Questions — Ontor",
     description: PAGE_DESCRIPTION,
-    images: ["/og.png"],
+    images: ["/og-voice.png"],
   },
 };
 
@@ -113,7 +113,7 @@ export default function FaqPage() {
               Frequently asked questions.
             </h1>
             <p className="faq-lede">
-              Voice readings, work rhythm, break reminders, and your data.
+              Live voice feedback, cues, guided resets, and your data.
             </p>
           </div>
         </section>
@@ -146,7 +146,7 @@ export default function FaqPage() {
 
             <div className="faq-cta">
               <h2 className="font-serif-display">
-                See how your workday is going.
+                Try voice feedback during your next call.
               </h2>
               <Link href="/install" className="faq-cta-btn">
                 Try Ontor free

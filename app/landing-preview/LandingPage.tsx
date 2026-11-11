@@ -2,18 +2,19 @@ import Link from "next/link";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import HeroDownloadButtons from "../components/landing/HeroDownloadButtons";
+import ProductLoop from "../components/landing/ProductLoop";
 import PreservedSections from "./PreservedSections";
 import { TodayPreview, NudgePreview, CompactPreview, WorkdayExplorer } from "./ProductPreviews";
 import s from "./preview.module.css";
-import RotatingHeroLine from "./RotatingHeroLine";
+
 
 const concepts = [{id:"a",label:"A · Today first"},{id:"b",label:"B · A workday unfolds"},{id:"c",label:"C · The useful moment"}];
 
 function HeroCopy() {
   return <div className={s.heroCopy}>
-    <span className={s.privacyBadge}>On-device · Private</span>
-    <h1>Hours at your computer.<RotatingHeroLine /><span className={s.heroHighlight}>Take a smart break!!</span></h1>
-    <p>Ontor learns how you interact with your computer to notice changes in your focus and work rhythm, then suggests a short break or simple exercise when it may help</p>
+    <span className={s.privacyBadge}>Real-time · Private · On-device</span>
+    <h1>Real-time voice feedback while you speak.</h1>
+    <p>See how your voice changes during demanding conversations, with cues when a reset may help, so you can work under pressure with confidence.</p>
     <HeroDownloadButtons />
   </div>;
 }
@@ -25,40 +26,40 @@ export default function LandingPage({ variant = "a", preview = false }: { varian
     <main id="top">
       <section className={s.hero}>
         <HeroCopy />
-        {variant==="a" && <figure className={s.heroFigure}>
-          <div className={s.previewIntro}><h2>When you’re tired, it’s easier to make mistakes.</h2></div>
-          <TodayPreview/>
-        </figure>}
-        {variant==="b" && <figure className={s.dayFigure}><div className={s.dayRail}><span>Your day</span><strong>Work</strong><i/><strong>Notice</strong><i/><strong>Reset</strong></div><div><TodayPreview/><figcaption>Your patterns through the day. Illustrative product preview.</figcaption></div></figure>}
+        {variant==="a" && <div className={s.callHero}>
+          <p className={s.callHeroContext}>Keep Ontor beside your everyday calls.</p>
+          <ProductLoop />
+        </div>}
+        {variant==="b" && <figure className={s.dayFigure}><div className={s.dayRail}><span>Your day</span><strong>Work</strong><i/><strong>Notice</strong><i/><strong>Reset</strong></div><div><TodayPreview/><figcaption>Interactive product preview · Illustrative readings</figcaption><figcaption>Your patterns through the day. Illustrative product preview.</figcaption></div></figure>}
         {variant==="c" && <WorkdayExplorer/>}
       </section>
 
       {variant !== "a" && (
       <section className={s.todayStory}>
         <h2>Your day, compared with your usual.</h2>
-        <div><p>See changes in your voice alongside your work rhythm, total activity, and uninterrupted work stretches. Useful during calls, and in the hours between them.</p><Link href="/how-it-works/">Understand your readings ↗</Link></div>
+        <div><p>Review voice readings alongside activity time and work stretches. Select a marker to explore its daily trend.</p><Link href="/how-it-works/">Understand your readings ↗</Link></div>
       </section>
       )}
 
       <section className={s.supportSection}>
-        <header><h2>Know when to pause as focus slips and fatigue builds.</h2></header>
+        <header><h2>A small cue during a demanding conversation.</h2></header>
         {variant==="a" && <>
-          <div className={s.supportRow}><div><span className={s.context}>Between calls</span><h3>You’ve been working for a while.</h3><p>Take a three-minute walk, then stretch gently. Snooze the reminder when you need more time.</p></div><div className={s.nudgeStage}><NudgePreview/></div></div>
-          <div className={s.supportRow}><div><span className={s.context}>During a call</span><h3>Live feedback. Room to keep talking.</h3><p>When your voice shifts from its usual pattern, a small cue suggests an action you can take during the conversation. No need to stop talking or open another screen.</p></div><div className={s.compactStage}><span className={s.menuBar}>◷ &nbsp; Ontor · Listening</span><CompactPreview/></div></div>
+          <div className={s.supportRow}><div><span className={s.context}>During a call</span><h3>Real-time support, within reach.</h3><p>When your voice shifts from its usual pattern, a small cue suggests an action you can take during the conversation.</p></div><div className={s.compactStage}><CompactPreview/></div></div>
+          <div className={s.supportRow}><div><span className={s.context}>After the call</span><h3>A moment to settle before the next conversation.</h3><p>Choose a guided breathing exercise when you want a reset. Compare voice readings before and afterward to see what changed.</p></div><div className={s.exercise}><span>Example guided reset</span><strong>Slowly breathe out</strong><p>Let your next exhale last a little longer.<br/>Keep it comfortable.</p><Link href="/how-it-works/">See how resets work ↗</Link></div></div>
         </>}
         {variant==="b" && <div className={s.workdaySteps}>
           <article><div className={s.stepCopy}><span className={s.context}>In the conversation</span><h3>See a change as you speak.</h3><p>Voice readings stay nearby in the compact view. You can keep it closed and check your day later.</p></div><CompactPreview/></article>
-          <article><div className={s.stepCopy}><span className={s.context}>Back at your desk</span><h3>Make room for a break.</h3><p>Your work rhythm and time without a break help inform the next reminder. Snooze it if you need to finish something.</p></div><NudgePreview/></article>
+          <article><div className={s.stepCopy}><span className={s.context}>Back at your desk</span><h3>Make room for a break.</h3><p>Time without a break can prompt a reminder. Snooze it if you need to finish something.</p></div><NudgePreview/></article>
           <article><div className={s.stepCopy}><span className={s.context}>Before the next task</span><h3>Try a short reset.</h3><p>Choose a guided exercise when it suits you. A voice check-in before and afterward lets you compare your readings.</p></div><div className={s.exercise}><span>Suggested reset</span><strong>Extended exhale</strong><p>Breathe in for 4 seconds.<br/>Breathe out slowly for 8.</p><Link href="/how-it-works/">Explore how resets work ↗</Link></div></article>
         </div>}
         {variant==="c" && <div className={s.companion}>
-          <div className={s.companionTop}><div><h3>Quietly there while you work.</h3><p>See live voice feedback during a call. Let work rhythm inform reminders between conversations.</p><CompactPreview/></div><div className={s.companionNudge}><NudgePreview/></div></div>
+          <div className={s.companionTop}><div><h3>Quietly there while you work.</h3><p>See live voice feedback during a call. Review your readings and try a reset between conversations.</p><CompactPreview/></div><div className={s.companionNudge}><NudgePreview/></div></div>
           <p className={s.companionNote}>You choose the next step: a break, a simple exercise, or more time to finish what you’re doing.</p>
         </div>}
-        <p className={s.healthNote}>Spending more time sedentary is associated with higher risks of type 2 diabetes and cardiovascular disease. Moving more and limiting sedentary time supports health. <a href="https://www.who.int/news-room/fact-sheets/detail/physical-activity" target="_blank" rel="noopener noreferrer">WHO guidance ↗</a></p>
+
       </section>
       <PreservedSections calm={variant === "a"} />
-      <section className={s.close}><div className={s.privacyNote}><p>Your analysis runs on your device. Cloud backup is optional and off by default.</p><Link href="/privacy/">How privacy works ↗</Link></div><h2>Try Ontor during your next workday.</h2><HeroDownloadButtons/><div className={s.closeLinks}><Link href="/for-teams/">Explore Ontor for teams ↗</Link></div></section>
+      <section className={s.close}><div className={s.privacyNote}><p>Your analysis runs on your device. Cloud backup is optional and off by default.</p><Link href="/privacy/">How privacy works ↗</Link></div><h2>Try Ontor during your next call.</h2><HeroDownloadButtons/><div className={s.closeLinks}><Link href="/for-teams/">Explore Ontor for teams ↗</Link></div></section>
     </main>
     <Footer />
   </div>;
